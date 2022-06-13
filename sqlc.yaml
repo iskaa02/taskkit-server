@@ -7,3 +7,4 @@ sql:
     go: 
       package: "models"
       out: "db/models"
+      emit_prepared_queries: true

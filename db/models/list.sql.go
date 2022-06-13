@@ -20,7 +20,7 @@ type CreateListParams struct {
 }
 
 func (q *Queries) CreateList(ctx context.Context, arg CreateListParams) error {
-	_, err := q.db.ExecContext(ctx, createList, arg.ID, arg.Name, arg.ThemeID)
+	_, err := q.exec(ctx, q.createListStmt, createList, arg.ID, arg.Name, arg.ThemeID)
 	return err
 }
 
@@ -35,7 +35,7 @@ type CreateThemeParams struct {
 }
 
 func (q *Queries) CreateTheme(ctx context.Context, arg CreateThemeParams) error {
-	_, err := q.db.ExecContext(ctx, createTheme, arg.Primary, arg.Secondary)
+	_, err := q.exec(ctx, q.createThemeStmt, createTheme, arg.Primary, arg.Secondary)
 	return err
 }
 
@@ -44,7 +44,7 @@ DELETE FROM list WHERE id=$1
 `
 
 func (q *Queries) DeleteList(ctx context.Context, id string) error {
-	_, err := q.db.ExecContext(ctx, deleteList, id)
+	_, err := q.exec(ctx, q.deleteListStmt, deleteList, id)
 	return err
 }
 
@@ -58,7 +58,7 @@ type FindThemeParams struct {
 }
 
 func (q *Queries) FindTheme(ctx context.Context, arg FindThemeParams) (int32, error) {
-	row := q.db.QueryRowContext(ctx, findTheme, arg.Primary, arg.Secondary)
+	row := q.queryRow(ctx, q.findThemeStmt, findTheme, arg.Primary, arg.Secondary)
 	var id int32
 	err := row.Scan(&id)
 	return id, err
@@ -76,6 +76,6 @@ type UpdateListParams struct {
 }
 
 func (q *Queries) UpdateList(ctx context.Context, arg UpdateListParams) error {
-	_, err := q.db.ExecContext(ctx, updateList, arg.ID, arg.Name, arg.ThemeID)
+	_, err := q.exec(ctx, q.updateListStmt, updateList, arg.ID, arg.Name, arg.ThemeID)
 	return err
 }

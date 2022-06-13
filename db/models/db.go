@@ -7,6 +7,7 @@ package models
 import (
 	"context"
 	"database/sql"
+	"fmt"
 )
 
 type DBTX interface {
@@ -20,12 +21,138 @@ func New(db DBTX) *Queries {
 	return &Queries{db: db}
 }
 
+func Prepare(ctx context.Context, db DBTX) (*Queries, error) {
+	q := Queries{db: db}
+	var err error
+	if q.createListStmt, err = db.PrepareContext(ctx, createList); err != nil {
+		return nil, fmt.Errorf("error preparing query CreateList: %w", err)
+	}
+	if q.createTaskStmt, err = db.PrepareContext(ctx, createTask); err != nil {
+		return nil, fmt.Errorf("error preparing query CreateTask: %w", err)
+	}
+	if q.createThemeStmt, err = db.PrepareContext(ctx, createTheme); err != nil {
+		return nil, fmt.Errorf("error preparing query CreateTheme: %w", err)
+	}
+	if q.deleteListStmt, err = db.PrepareContext(ctx, deleteList); err != nil {
+		return nil, fmt.Errorf("error preparing query DeleteList: %w", err)
+	}
+	if q.deleteTaskStmt, err = db.PrepareContext(ctx, deleteTask); err != nil {
+		return nil, fmt.Errorf("error preparing query DeleteTask: %w", err)
+	}
+	if q.findThemeStmt, err = db.PrepareContext(ctx, findTheme); err != nil {
+		return nil, fmt.Errorf("error preparing query FindTheme: %w", err)
+	}
+	if q.updateListStmt, err = db.PrepareContext(ctx, updateList); err != nil {
+		return nil, fmt.Errorf("error preparing query UpdateList: %w", err)
+	}
+	if q.updateTaskStmt, err = db.PrepareContext(ctx, updateTask); err != nil {
+		return nil, fmt.Errorf("error preparing query UpdateTask: %w", err)
+	}
+	return &q, nil
+}
+
+func (q *Queries) Close() error {
+	var err error
+	if q.createListStmt != nil {
+		if cerr := q.createListStmt.Close(); cerr != nil {
+			err = fmt.Errorf("error closing createListStmt: %w", cerr)
+		}
+	}
+	if q.createTaskStmt != nil {
+		if cerr := q.createTaskStmt.Close(); cerr != nil {
+			err = fmt.Errorf("error closing createTaskStmt: %w", cerr)
+		}
+	}
+	if q.createThemeStmt != nil {
+		if cerr := q.createThemeStmt.Close(); cerr != nil {
+			err = fmt.Errorf("error closing createThemeStmt: %w", cerr)
+		}
+	}
+	if q.deleteListStmt != nil {
+		if cerr := q.deleteListStmt.Close(); cerr != nil {
+			err = fmt.Errorf("error closing deleteListStmt: %w", cerr)
+		}
+	}
+	if q.deleteTaskStmt != nil {
+		if cerr := q.deleteTaskStmt.Close(); cerr != nil {
+			err = fmt.Errorf("error closing deleteTaskStmt: %w", cerr)
+		}
+	}
+	if q.findThemeStmt != nil {
+		if cerr := q.findThemeStmt.Close(); cerr != nil {
+			err = fmt.Errorf("error closing findThemeStmt: %w", cerr)
+		}
+	}
+	if q.updateListStmt != nil {
+		if cerr := q.updateListStmt.Close(); cerr != nil {
+			err = fmt.Errorf("error closing updateListStmt: %w", cerr)
+		}
+	}
+	if q.updateTaskStmt != nil {
+		if cerr := q.updateTaskStmt.Close(); cerr != nil {
+			err = fmt.Errorf("error closing updateTaskStmt: %w", cerr)
+		}
+	}
+	return err
+}
+
+func (q *Queries) exec(ctx context.Context, stmt *sql.Stmt, query string, args ...interface{}) (sql.Result, error) {
+	switch {
+	case stmt != nil && q.tx != nil:
+		return q.tx.StmtContext(ctx, stmt).ExecContext(ctx, args...)
+	case stmt != nil:
+		return stmt.ExecContext(ctx, args...)
+	default:
+		return q.db.ExecContext(ctx, query, args...)
+	}
+}
+
+func (q *Queries) query(ctx context.Context, stmt *sql.Stmt, query string, args ...interface{}) (*sql.Rows, error) {
+	switch {
+	case stmt != nil && q.tx != nil:
+		return q.tx.StmtContext(ctx, stmt).QueryContext(ctx, args...)
+	case stmt != nil:
+		return stmt.QueryContext(ctx, args...)
+	default:
+		return q.db.QueryContext(ctx, query, args...)
+	}
+}
+
+func (q *Queries) queryRow(ctx context.Context, stmt *sql.Stmt, query string, args ...interface{}) *sql.Row {
+	switch {
+	case stmt != nil && q.tx != nil:
+		return q.tx.StmtContext(ctx, stmt).QueryRowContext(ctx, args...)
+	case stmt != nil:
+		return stmt.QueryRowContext(ctx, args...)
+	default:
+		return q.db.QueryRowContext(ctx, query, args...)
+	}
+}
+
 type Queries struct {
-	db DBTX
+	db              DBTX
+	tx              *sql.Tx
+	createListStmt  *sql.Stmt
+	createTaskStmt  *sql.Stmt
+	createThemeStmt *sql.Stmt
+	deleteListStmt  *sql.Stmt
+	deleteTaskStmt  *sql.Stmt
+	findThemeStmt   *sql.Stmt
+	updateListStmt  *sql.Stmt
+	updateTaskStmt  *sql.Stmt
 }
 
 func (q *Queries) WithTx(tx *sql.Tx) *Queries {
 	return &Queries{
-		db: tx,
+		db:              tx,
+		tx:              tx,
+		createListStmt:  q.createListStmt,
+		createTaskStmt:  q.createTaskStmt,
+		createThemeStmt: q.createThemeStmt,
+		deleteListStmt:  q.deleteListStmt,
+		deleteTaskStmt:  q.deleteTaskStmt,
+		findThemeStmt:   q.findThemeStmt,
+		updateListStmt:  q.updateListStmt,
+		updateTaskStmt:  q.updateTaskStmt,
 	}
 }

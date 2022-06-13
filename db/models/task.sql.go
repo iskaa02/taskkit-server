@@ -38,7 +38,7 @@ type CreateTaskParams struct {
 }
 
 func (q *Queries) CreateTask(ctx context.Context, arg CreateTaskParams) error {
-	_, err := q.db.ExecContext(ctx, createTask,
+	_, err := q.exec(ctx, q.createTaskStmt, createTask,
 		arg.ID,
 		arg.Name,
 		arg.Subtasks,
@@ -56,7 +56,7 @@ DELETE FROM task WHERE id=$1
 `
 
 func (q *Queries) DeleteTask(ctx context.Context, id string) error {
-	_, err := q.db.ExecContext(ctx, deleteTask, id)
+	_, err := q.exec(ctx, q.deleteTaskStmt, deleteTask, id)
 	return err
 }
 
@@ -84,7 +84,7 @@ type UpdateTaskParams struct {
 }
 
 func (q *Queries) UpdateTask(ctx context.Context, arg UpdateTaskParams) error {
-	_, err := q.db.ExecContext(ctx, updateTask,
+	_, err := q.exec(ctx, q.updateTaskStmt, updateTask,
 		arg.ID,
 		arg.Name,
 		arg.Subtasks,

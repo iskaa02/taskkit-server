@@ -5,6 +5,7 @@ import (
 	"net/http"
 
 	"github.com/go-chi/chi/v5"
+	"github.com/iskaa02/taskkit-server/api/sync"
 )
 
 type Server struct {
@@ -14,6 +15,7 @@ type Server struct {
 
 func NewServer(db *sql.DB) *Server {
 	r := chi.NewMux()
+	r.Mount("/sync", sync.Routes(db))
 	return &Server{db, r}
 }
 

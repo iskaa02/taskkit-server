@@ -8,13 +8,14 @@ import (
 )
 
 type sync struct {
-	db sql.DB
+	db *sql.DB
 }
 
-func Sync(db sql.DB) http.Handler {
+func Routes(db *sql.DB) http.Handler {
 	h := &sync{db}
+	// route will be mounted on /sync
 	r := chi.NewRouter()
-	r.Get("/sync/pushchanges", h.PushChanges)
-	r.Get("/sync/pullchanges", h.PullChanges)
+	r.Get("/pushchanges", h.PushChanges)
+	r.Get("/pullchanges", h.PullChanges)
 	return r
 }

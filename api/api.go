@@ -19,7 +19,7 @@ func NewServer(db *sql.DB) *Server {
 	return &Server{db, r}
 }
 
-func (s Server) Start() error {
+func (s Server) Run() error {
 	err := http.ListenAndServe(":8080", s.r)
 	if err != nil {
 		return err

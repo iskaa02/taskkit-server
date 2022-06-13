@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"net/http"
 
-	"github.com/iskaa02/taskkit-server/models"
+	"github.com/iskaa02/taskkit-server/db/models"
 )
 
 func (s sync) PushChanges(w http.ResponseWriter, r *http.Request) {

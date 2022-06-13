@@ -3,7 +3,7 @@ package sync
 import (
 	"context"
 
-	"github.com/iskaa02/taskkit-server/models"
+	"github.com/iskaa02/taskkit-server/db/models"
 )
 
 type (

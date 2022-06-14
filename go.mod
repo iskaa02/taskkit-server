@@ -7,3 +7,5 @@ require (
 	github.com/lib/pq v1.10.6
 	github.com/tabbed/pqtype v0.1.1
 )
+
+require gopkg.in/guregu/null.v4 v4.0.0

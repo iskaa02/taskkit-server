@@ -5,7 +5,7 @@ import (
 )
 
 type changes struct {
-	List listChanges `json:"list"`
+	List listChanges `json:"lists"`
 	Task taskChanges `json:"tasks"`
 }
 

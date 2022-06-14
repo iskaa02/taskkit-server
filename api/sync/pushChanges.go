@@ -2,6 +2,7 @@ package sync
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 
 	"github.com/iskaa02/taskkit-server/db/models"
@@ -9,17 +10,27 @@ import (
 
 func (s sync) PushChanges(w http.ResponseWriter, r *http.Request) {
 	changes := changes{}
-	json.NewDecoder(r.Body).Decode(&changes)
+	err := json.NewDecoder(r.Body).Decode(&changes)
+	if err != nil {
+		http.Error(w, "bad JSON format", http.StatusBadRequest)
+	}
 	tx, err := s.db.Begin()
 	if err != nil {
 		panic(err)
 	}
 	queries := models.New(tx)
 	err = applyListChanges(changes.List, queries)
+	if err != nil {
+		tx.Rollback()
+		fmt.Println(err)
+		http.Error(w, "Something went wrong", http.StatusBadRequest)
+		return
+	}
 	err = applyTaskChanges(changes.Task, queries)
 	if err != nil {
 		tx.Rollback()
-		http.Error(w, err.Error(), http.StatusBadRequest)
+		fmt.Println(err)
+		http.Error(w, "Something went wrong", http.StatusBadRequest)
 		return
 	}
 	tx.Commit()

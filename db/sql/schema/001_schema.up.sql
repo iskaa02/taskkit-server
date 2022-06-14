@@ -1,4 +1,4 @@
-CREATE TYPE repeat_enum AS ENUM ('daily','weekly','monthly');
+-- CREATE TYPE repeat_enum AS ENUM ('daily','weekly','monthly');
 CREATE TABLE theme (
     id SERIAL PRIMARY KEY,
     "primary"  VARCHAR(6) NOT NULL,
@@ -17,8 +17,8 @@ CREATE TABLE task (
     subtasks JSONB, 
     list_id VARCHAR NOT NULL REFERENCES list(id), 
     description  TEXT,
-    reminder DATE,
-    repeat repeat_enum,
+    reminder TIMESTAMP,
+    repeat VARCHAR(8),
     is_completed BOOLEAN NOT NULL DEFAULT false,
     last_modified TIMESTAMP DEFAULT current_timestamp 
 );

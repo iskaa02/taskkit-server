@@ -19,8 +19,7 @@ BEGIN
         current := previous + INTERVAL '1 milliseconds';
     END IF;
 
-    IF NEW.last_modified IS NULL OR
-       (previous IS NOT NULL AND as_epoch(NEW.last_modified) = as_epoch(previous)) THEN
+    IF NEW.last_modified IS NULL THEN
         -- If record does not carry last-modified, or if the one specified
         -- is equal to previous, assign it to current (i.e. bump it).
         NEW.last_modified := current;

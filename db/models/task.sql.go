@@ -7,9 +7,9 @@ package models
 
 import (
 	"context"
-	"database/sql"
 
 	"github.com/tabbed/pqtype"
+	null "gopkg.in/guregu/null.v4"
 )
 
 const createTask = `-- name: CreateTask :exec
@@ -24,17 +24,26 @@ INSERT INTO task (
     is_completed
 )
 VALUES($1,$2,$3,$4,$5,$6,$7,$8)
+ON CONFLICT (id) DO 
+    UPDATE SET
+        name = excluded.name, 
+        subtasks = excluded.subtasks,
+        list_id = excluded.list_id,
+        description = excluded.description,
+        reminder = excluded.reminder,
+        repeat = excluded.repeat,
+        is_completed = excluded.is_completed
 `
 
 type CreateTaskParams struct {
-	ID          string
-	Name        string
-	Subtasks    pqtype.NullRawMessage
-	ListID      string
-	Description sql.NullString
-	Reminder    sql.NullTime
-	Repeat      RepeatEnum
-	IsCompleted bool
+	ID          string                `json:"id"`
+	Name        string                `json:"name"`
+	Subtasks    pqtype.NullRawMessage `json:"subtasks"`
+	ListID      string                `json:"list_id"`
+	Description null.String           `json:"description"`
+	Reminder    null.Time             `json:"reminder"`
+	Repeat      null.String           `json:"repeat"`
+	IsCompleted bool                  `json:"is_completed"`
 }
 
 func (q *Queries) CreateTask(ctx context.Context, arg CreateTaskParams) error {
@@ -60,7 +69,7 @@ func (q *Queries) DeleteTask(ctx context.Context, id string) error {
 	return err
 }
 
-const updateTask = `-- name: UpdateTask :exec
+const updateTask = `-- name: UpdateTask :execrows
 UPDATE task SET
     name=$2,
     subtasks=$3,
@@ -73,18 +82,18 @@ WHERE id=$1
 `
 
 type UpdateTaskParams struct {
-	ID          string
-	Name        string
-	Subtasks    pqtype.NullRawMessage
-	ListID      string
-	Description sql.NullString
-	Reminder    sql.NullTime
-	Repeat      RepeatEnum
-	IsCompleted bool
+	ID          string                `json:"id"`
+	Name        string                `json:"name"`
+	Subtasks    pqtype.NullRawMessage `json:"subtasks"`
+	ListID      string                `json:"list_id"`
+	Description null.String           `json:"description"`
+	Reminder    null.Time             `json:"reminder"`
+	Repeat      null.String           `json:"repeat"`
+	IsCompleted bool                  `json:"is_completed"`
 }
 
-func (q *Queries) UpdateTask(ctx context.Context, arg UpdateTaskParams) error {
-	_, err := q.exec(ctx, q.updateTaskStmt, updateTask,
+func (q *Queries) UpdateTask(ctx context.Context, arg UpdateTaskParams) (int64, error) {
+	result, err := q.exec(ctx, q.updateTaskStmt, updateTask,
 		arg.ID,
 		arg.Name,
 		arg.Subtasks,
@@ -94,5 +103,8 @@ func (q *Queries) UpdateTask(ctx context.Context, arg UpdateTaskParams) error {
 		arg.Repeat,
 		arg.IsCompleted,
 	)
-	return err
+	if err != nil {
+		return 0, err
+	}
+	return result.RowsAffected()
 }

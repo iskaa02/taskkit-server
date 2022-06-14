@@ -5,53 +5,31 @@
 package models
 
 import (
-	"database/sql"
-	"fmt"
-
 	"github.com/tabbed/pqtype"
+	null "gopkg.in/guregu/null.v4"
 )
-
-type RepeatEnum string
-
-const (
-	RepeatEnumDaily   RepeatEnum = "daily"
-	RepeatEnumWeekly  RepeatEnum = "weekly"
-	RepeatEnumMonthly RepeatEnum = "monthly"
-)
-
-func (e *RepeatEnum) Scan(src interface{}) error {
-	switch s := src.(type) {
-	case []byte:
-		*e = RepeatEnum(s)
-	case string:
-		*e = RepeatEnum(s)
-	default:
-		return fmt.Errorf("unsupported scan type for RepeatEnum: %T", src)
-	}
-	return nil
-}
 
 type List struct {
-	ID           string
-	Name         string
-	ThemeID      int32
-	LastModified sql.NullTime
+	ID           string    `json:"id"`
+	Name         string    `json:"name"`
+	ThemeID      int32     `json:"theme_id"`
+	LastModified null.Time `json:"last_modified"`
 }
 
 type Task struct {
-	ID           string
-	Name         string
-	Subtasks     pqtype.NullRawMessage
-	ListID       string
-	Description  sql.NullString
-	Reminder     sql.NullTime
-	Repeat       RepeatEnum
-	IsCompleted  bool
-	LastModified sql.NullTime
+	ID           string                `json:"id"`
+	Name         string                `json:"name"`
+	Subtasks     pqtype.NullRawMessage `json:"subtasks"`
+	ListID       string                `json:"list_id"`
+	Description  null.String           `json:"description"`
+	Reminder     null.Time             `json:"reminder"`
+	Repeat       null.String           `json:"repeat"`
+	IsCompleted  bool                  `json:"is_completed"`
+	LastModified null.Time             `json:"last_modified"`
 }
 
 type Theme struct {
-	ID        int32
-	Primary   string
-	Secondary string
+	ID        int32  `json:"id"`
+	Primary   string `json:"primary"`
+	Secondary string `json:"secondary"`
 }

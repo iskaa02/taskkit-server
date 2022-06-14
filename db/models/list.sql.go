@@ -10,33 +10,41 @@ import (
 )
 
 const createList = `-- name: CreateList :exec
-INSERT INTO list (id,name,theme_id) VALUES($1,$2,$3)
+INSERT INTO list (id,name,theme_id) 
+VALUES ($1,$2,$3)
+ON CONFLICT (id) DO 
+    UPDATE SET
+        name = excluded.name, 
+        theme_id = excluded.theme_id
 `
 
 type CreateListParams struct {
-	ID      string
-	Name    string
-	ThemeID int32
+	ID      string `json:"id"`
+	Name    string `json:"name"`
+	ThemeID int32  `json:"theme_id"`
 }
 
+// if id don't exist insert else update
 func (q *Queries) CreateList(ctx context.Context, arg CreateListParams) error {
 	_, err := q.exec(ctx, q.createListStmt, createList, arg.ID, arg.Name, arg.ThemeID)
 	return err
 }
 
-const createTheme = `-- name: CreateTheme :exec
+const createTheme = `-- name: CreateTheme :one
 INSERT INTO theme("primary",secondary)
-    VALUES($1,$2)
+    VALUES($1,$2) RETURNING id
 `
 
 type CreateThemeParams struct {
-	Primary   string
-	Secondary string
+	Primary   string `json:"primary"`
+	Secondary string `json:"secondary"`
 }
 
-func (q *Queries) CreateTheme(ctx context.Context, arg CreateThemeParams) error {
-	_, err := q.exec(ctx, q.createThemeStmt, createTheme, arg.Primary, arg.Secondary)
-	return err
+func (q *Queries) CreateTheme(ctx context.Context, arg CreateThemeParams) (int32, error) {
+	row := q.queryRow(ctx, q.createThemeStmt, createTheme, arg.Primary, arg.Secondary)
+	var id int32
+	err := row.Scan(&id)
+	return id, err
 }
 
 const deleteList = `-- name: DeleteList :exec
@@ -53,8 +61,8 @@ SELECT id FROM theme WHERE "primary"=$1 AND secondary=$2
 `
 
 type FindThemeParams struct {
-	Primary   string
-	Secondary string
+	Primary   string `json:"primary"`
+	Secondary string `json:"secondary"`
 }
 
 func (q *Queries) FindTheme(ctx context.Context, arg FindThemeParams) (int32, error) {
@@ -64,18 +72,21 @@ func (q *Queries) FindTheme(ctx context.Context, arg FindThemeParams) (int32, er
 	return id, err
 }
 
-const updateList = `-- name: UpdateList :exec
+const updateList = `-- name: UpdateList :execrows
 UPDATE list SET id=$1, name=$2, theme_id=$3 
     WHERE id=$1
 `
 
 type UpdateListParams struct {
-	ID      string
-	Name    string
-	ThemeID int32
+	ID      string `json:"id"`
+	Name    string `json:"name"`
+	ThemeID int32  `json:"theme_id"`
 }
 
-func (q *Queries) UpdateList(ctx context.Context, arg UpdateListParams) error {
-	_, err := q.exec(ctx, q.updateListStmt, updateList, arg.ID, arg.Name, arg.ThemeID)
-	return err
+func (q *Queries) UpdateList(ctx context.Context, arg UpdateListParams) (int64, error) {
+	result, err := q.exec(ctx, q.updateListStmt, updateList, arg.ID, arg.Name, arg.ThemeID)
+	if err != nil {
+		return 0, err
+	}
+	return result.RowsAffected()
 }

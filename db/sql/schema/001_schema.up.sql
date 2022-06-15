@@ -8,7 +8,8 @@ CREATE TABLE list (
     id VARCHAR PRIMARY KEY,
     name VARCHAR NOT NULL,
     theme_id INT NOT NULL REFERENCES theme(id),
-    last_modified TIMESTAMP DEFAULT current_timestamp
+    last_modified TIMESTAMP DEFAULT current_timestamp,
+    is_deleted boolean DEFAULT FALSE 
 );
 
 CREATE TABLE task (
@@ -19,6 +20,7 @@ CREATE TABLE task (
     description  TEXT,
     reminder TIMESTAMP,
     repeat VARCHAR(8),
-    is_completed BOOLEAN NOT NULL DEFAULT false,
-    last_modified TIMESTAMP DEFAULT current_timestamp 
+    is_completed BOOLEAN NOT NULL DEFAULT FALSE,
+    last_modified TIMESTAMP DEFAULT current_timestamp,
+    is_deleted boolean DEFAULT FALSE 
 );

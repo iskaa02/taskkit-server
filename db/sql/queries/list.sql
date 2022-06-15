@@ -1,19 +1,15 @@
 -- name: CreateList :exec
--- if id don't exist insert else update
-INSERT INTO list (id,name,theme_id) 
-VALUES ($1,$2,$3)
-ON CONFLICT (id) DO 
-    UPDATE SET
-        name = excluded.name, 
-        theme_id = excluded.theme_id;
+INSERT INTO list (id,name,theme_id) VALUES($1,$2,$3);
 
 -- name: UpdateList :execrows
 UPDATE list SET id=$1, name=$2, theme_id=$3 
     WHERE id=$1;
 
 -- name: DeleteList :exec
-DELETE FROM list WHERE id=$1;
+UPDATE list SET is_deleted=true WHERE id=$1;
 
+-- name: CheckListExist :one
+SELECT EXISTS(SELECT 1 FROM list WHERE id =$1);
 
 -- name: CreateTheme :one
 INSERT INTO theme("primary",secondary)

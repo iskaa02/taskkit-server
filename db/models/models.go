@@ -5,15 +5,18 @@
 package models
 
 import (
+	"database/sql"
+
 	"github.com/tabbed/pqtype"
 	null "gopkg.in/guregu/null.v4"
 )
 
 type List struct {
-	ID           string    `json:"id"`
-	Name         string    `json:"name"`
-	ThemeID      int32     `json:"theme_id"`
-	LastModified null.Time `json:"last_modified"`
+	ID           string       `json:"id"`
+	Name         string       `json:"name"`
+	ThemeID      int32        `json:"theme_id"`
+	LastModified null.Time    `json:"last_modified"`
+	IsDeleted    sql.NullBool `json:"is_deleted"`
 }
 
 type Task struct {
@@ -26,6 +29,7 @@ type Task struct {
 	Repeat       null.String           `json:"repeat"`
 	IsCompleted  bool                  `json:"is_completed"`
 	LastModified null.Time             `json:"last_modified"`
+	IsDeleted    sql.NullBool          `json:"is_deleted"`
 }
 
 type Theme struct {

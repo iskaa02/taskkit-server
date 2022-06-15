@@ -9,13 +9,19 @@ import (
 	"context"
 )
 
+const checkListExist = `-- name: CheckListExist :one
+SELECT EXISTS(SELECT 1 FROM list WHERE id =$1)
+`
+
+func (q *Queries) CheckListExist(ctx context.Context, id string) (bool, error) {
+	row := q.queryRow(ctx, q.checkListExistStmt, checkListExist, id)
+	var exists bool
+	err := row.Scan(&exists)
+	return exists, err
+}
+
 const createList = `-- name: CreateList :exec
-INSERT INTO list (id,name,theme_id) 
-VALUES ($1,$2,$3)
-ON CONFLICT (id) DO 
-    UPDATE SET
-        name = excluded.name, 
-        theme_id = excluded.theme_id
+INSERT INTO list (id,name,theme_id) VALUES($1,$2,$3)
 `
 
 type CreateListParams struct {
@@ -24,7 +30,6 @@ type CreateListParams struct {
 	ThemeID int32  `json:"theme_id"`
 }
 
-// if id don't exist insert else update
 func (q *Queries) CreateList(ctx context.Context, arg CreateListParams) error {
 	_, err := q.exec(ctx, q.createListStmt, createList, arg.ID, arg.Name, arg.ThemeID)
 	return err
@@ -48,7 +53,7 @@ func (q *Queries) CreateTheme(ctx context.Context, arg CreateThemeParams) (int32
 }
 
 const deleteList = `-- name: DeleteList :exec
-DELETE FROM list WHERE id=$1
+UPDATE list SET is_deleted=true WHERE id=$1
 `
 
 func (q *Queries) DeleteList(ctx context.Context, id string) error {

@@ -12,6 +12,17 @@ import (
 	null "gopkg.in/guregu/null.v4"
 )
 
+const checkTaskExist = `-- name: CheckTaskExist :one
+SELECT EXISTS(SELECT 1 FROM task WHERE ID =$1)
+`
+
+func (q *Queries) CheckTaskExist(ctx context.Context, id string) (bool, error) {
+	row := q.queryRow(ctx, q.checkTaskExistStmt, checkTaskExist, id)
+	var exists bool
+	err := row.Scan(&exists)
+	return exists, err
+}
+
 const createTask = `-- name: CreateTask :exec
 INSERT INTO task (
     id,
@@ -24,15 +35,6 @@ INSERT INTO task (
     is_completed
 )
 VALUES($1,$2,$3,$4,$5,$6,$7,$8)
-ON CONFLICT (id) DO 
-    UPDATE SET
-        name = excluded.name, 
-        subtasks = excluded.subtasks,
-        list_id = excluded.list_id,
-        description = excluded.description,
-        reminder = excluded.reminder,
-        repeat = excluded.repeat,
-        is_completed = excluded.is_completed
 `
 
 type CreateTaskParams struct {
@@ -61,7 +63,7 @@ func (q *Queries) CreateTask(ctx context.Context, arg CreateTaskParams) error {
 }
 
 const deleteTask = `-- name: DeleteTask :exec
-DELETE FROM task WHERE id=$1
+UPDATE task SET is_deleted=true WHERE id=$1
 `
 
 func (q *Queries) DeleteTask(ctx context.Context, id string) error {

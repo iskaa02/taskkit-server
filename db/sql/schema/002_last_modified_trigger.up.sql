@@ -18,13 +18,7 @@ BEGIN
     IF previous IS NOT NULL AND previous >= current THEN
         current := previous + INTERVAL '1 milliseconds';
     END IF;
-
-    IF NEW.last_modified IS NULL THEN
-        -- If record does not carry last-modified, or if the one specified
-        -- is equal to previous, assign it to current (i.e. bump it).
         NEW.last_modified := current;
-    END IF;
-
     RETURN NEW;
 END;
 $$ LANGUAGE plpgsql;

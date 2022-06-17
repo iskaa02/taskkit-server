@@ -22,12 +22,20 @@ func (s sync) PushChanges(w http.ResponseWriter, r *http.Request) {
 	err = applyListChanges(changes.List, queries)
 	if err != nil {
 		tx.Rollback()
+		if err.Error() == "conflict" {
+			http.Error(w, "Tried to update deleted record, Pull latest changes first", http.StatusBadRequest)
+			return
+		}
 		fmt.Println(err)
 		http.Error(w, "Something went wrong", http.StatusBadRequest)
 		return
 	}
 	err = applyTaskChanges(changes.Task, queries)
 	if err != nil {
+		if err.Error() == "conflict" {
+			http.Error(w, "Tried to update deleted record, Pull latest changes first", http.StatusBadRequest)
+			return
+		}
 		tx.Rollback()
 		fmt.Println(err)
 		http.Error(w, "Something went wrong", http.StatusBadRequest)

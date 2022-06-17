@@ -8,9 +8,9 @@ CREATE TABLE list (
     id VARCHAR PRIMARY KEY,
     name VARCHAR NOT NULL,
     theme_id INT NOT NULL REFERENCES theme(id),
-    is_deleted boolean DEFAULT FALSE,
-    last_modified TIMESTAMP DEFAULT clock_timestamp(),
-    created_at TIMESTAMP DEFAULT clock_timestamp()
+    is_deleted boolean NOT NULL DEFAULT FALSE,
+    last_modified TIMESTAMP NOT NULL DEFAULT clock_timestamp(),
+    created_at TIMESTAMP NOT NULL DEFAULT clock_timestamp()
 );
 
 CREATE TABLE task (
@@ -22,7 +22,7 @@ CREATE TABLE task (
     reminder TIMESTAMP,
     repeat VARCHAR(8),
     is_completed BOOLEAN NOT NULL DEFAULT FALSE,
-    is_deleted boolean DEFAULT FALSE,
-    last_modified TIMESTAMP DEFAULT clock_timestamp(),
-    created_at TIMESTAMP DEFAULT clock_timestamp()
+    is_deleted boolean NOT NULL DEFAULT FALSE,
+    last_modified TIMESTAMP NOT NULL DEFAULT clock_timestamp(),
+    created_at TIMESTAMP NOT NULL DEFAULT clock_timestamp()
 );

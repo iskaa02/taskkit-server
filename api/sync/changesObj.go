@@ -3,12 +3,13 @@ package sync
 import (
 	"context"
 	"database/sql"
+	"errors"
 
 	"github.com/iskaa02/taskkit-server/db/models"
 )
 
 type (
-	rawTask models.Task
+	rawTask models.GetNewlyCreatedTasksRow
 	theme   struct {
 		Primary   string `json:"primary"`
 		Secondary string `json:"secondary"`
@@ -49,20 +50,6 @@ func (t theme) findTheme(q *models.Queries) (themeID int32, err error) {
 	return
 }
 
-func (t rawTask) Create(q *models.Queries) error {
-	err := q.CreateTask(context.Background(), models.CreateTaskParams{
-		ID:          t.ID,
-		Name:        t.Name,
-		Subtasks:    t.Subtasks,
-		ListID:      t.ListID,
-		Description: t.Description,
-		Reminder:    t.Reminder,
-		Repeat:      t.Repeat,
-		IsCompleted: t.IsCompleted,
-	})
-	return err
-}
-
 func (t rawTask) Update(q *models.Queries) error {
 	updateArgs := models.UpdateTaskParams{
 		ID:          t.ID,
@@ -74,29 +61,29 @@ func (t rawTask) Update(q *models.Queries) error {
 		Repeat:      t.Repeat,
 		IsCompleted: t.IsCompleted,
 	}
-	updatedRows, err := q.UpdateTask(context.Background(), updateArgs)
-	/*
-		    if 0 rows have been updated this mean that the column with provided
-			id don't exist so we have to insert it
-	*/
-	if updatedRows == 0 && err == nil {
-		err := q.CreateTask(context.Background(), models.CreateTaskParams(updateArgs))
-		return err
+	isDeleted, err := q.CheckTaskIsDeleted(context.Background(), t.ID)
+	if err != nil {
+		// Task don't exist
+		if err == sql.ErrNoRows {
+			return q.CreateTask(context.Background(), models.CreateTaskParams(updateArgs))
+		} else {
+			return err
+		}
 	}
-	return err
-}
 
-func (l rawList) Create(q *models.Queries) error {
-	themeID, err := l.Theme.findTheme(q)
-	err = q.CreateList(context.Background(), models.CreateListParams{
-		ID:      l.ID,
-		Name:    l.Name,
-		ThemeID: themeID,
-	})
+	if isDeleted {
+		return errors.New("conflict")
+	}
+	_, err = q.UpdateTask(context.Background(), updateArgs)
 	return err
 }
 
 func (l rawList) Update(q *models.Queries) error {
+	// exist, err := q.CheckListExist(context.Background(), l.ID)
+	isDeleted, err := q.CheckListIsDeleted(context.Background(), l.ID)
+	if err != nil {
+		return err
+	}
 	themeID, err := l.Theme.findTheme(q)
 	if err != nil {
 		return err
@@ -106,10 +93,17 @@ func (l rawList) Update(q *models.Queries) error {
 		Name:    l.Name,
 		ThemeID: themeID,
 	}
-	updatedRows, err := q.UpdateList(context.Background(), updateArgs)
-	if updatedRows == 0 && err == nil {
-		err := q.CreateList(context.Background(), models.CreateListParams(updateArgs))
-		return err
+	if err != nil {
+		// Task don't exist
+		if err == sql.ErrNoRows {
+			return q.CreateList(context.Background(), models.CreateListParams(updateArgs))
+		} else {
+			return err
+		}
 	}
+	if isDeleted {
+		return errors.New("conflict")
+	}
+	_, err = q.UpdateList(context.Background(), updateArgs)
 	return err
 }

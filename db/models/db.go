@@ -24,11 +24,11 @@ func New(db DBTX) *Queries {
 func Prepare(ctx context.Context, db DBTX) (*Queries, error) {
 	q := Queries{db: db}
 	var err error
-	if q.checkListExistStmt, err = db.PrepareContext(ctx, checkListExist); err != nil {
-		return nil, fmt.Errorf("error preparing query CheckListExist: %w", err)
+	if q.checkListIsDeletedStmt, err = db.PrepareContext(ctx, checkListIsDeleted); err != nil {
+		return nil, fmt.Errorf("error preparing query CheckListIsDeleted: %w", err)
 	}
-	if q.checkTaskExistStmt, err = db.PrepareContext(ctx, checkTaskExist); err != nil {
-		return nil, fmt.Errorf("error preparing query CheckTaskExist: %w", err)
+	if q.checkTaskIsDeletedStmt, err = db.PrepareContext(ctx, checkTaskIsDeleted); err != nil {
+		return nil, fmt.Errorf("error preparing query CheckTaskIsDeleted: %w", err)
 	}
 	if q.createListStmt, err = db.PrepareContext(ctx, createList); err != nil {
 		return nil, fmt.Errorf("error preparing query CreateList: %w", err)
@@ -48,6 +48,24 @@ func Prepare(ctx context.Context, db DBTX) (*Queries, error) {
 	if q.findThemeStmt, err = db.PrepareContext(ctx, findTheme); err != nil {
 		return nil, fmt.Errorf("error preparing query FindTheme: %w", err)
 	}
+	if q.getNewlyCreatedListsStmt, err = db.PrepareContext(ctx, getNewlyCreatedLists); err != nil {
+		return nil, fmt.Errorf("error preparing query GetNewlyCreatedLists: %w", err)
+	}
+	if q.getNewlyCreatedTasksStmt, err = db.PrepareContext(ctx, getNewlyCreatedTasks); err != nil {
+		return nil, fmt.Errorf("error preparing query GetNewlyCreatedTasks: %w", err)
+	}
+	if q.getNewlyDeletedListsStmt, err = db.PrepareContext(ctx, getNewlyDeletedLists); err != nil {
+		return nil, fmt.Errorf("error preparing query GetNewlyDeletedLists: %w", err)
+	}
+	if q.getNewlyDeletedTasksStmt, err = db.PrepareContext(ctx, getNewlyDeletedTasks); err != nil {
+		return nil, fmt.Errorf("error preparing query GetNewlyDeletedTasks: %w", err)
+	}
+	if q.getNewlyUpdatedListsStmt, err = db.PrepareContext(ctx, getNewlyUpdatedLists); err != nil {
+		return nil, fmt.Errorf("error preparing query GetNewlyUpdatedLists: %w", err)
+	}
+	if q.getNewlyUpdatedTasksStmt, err = db.PrepareContext(ctx, getNewlyUpdatedTasks); err != nil {
+		return nil, fmt.Errorf("error preparing query GetNewlyUpdatedTasks: %w", err)
+	}
 	if q.updateListStmt, err = db.PrepareContext(ctx, updateList); err != nil {
 		return nil, fmt.Errorf("error preparing query UpdateList: %w", err)
 	}
@@ -59,14 +77,14 @@ func Prepare(ctx context.Context, db DBTX) (*Queries, error) {
 
 func (q *Queries) Close() error {
 	var err error
-	if q.checkListExistStmt != nil {
-		if cerr := q.checkListExistStmt.Close(); cerr != nil {
-			err = fmt.Errorf("error closing checkListExistStmt: %w", cerr)
+	if q.checkListIsDeletedStmt != nil {
+		if cerr := q.checkListIsDeletedStmt.Close(); cerr != nil {
+			err = fmt.Errorf("error closing checkListIsDeletedStmt: %w", cerr)
 		}
 	}
-	if q.checkTaskExistStmt != nil {
-		if cerr := q.checkTaskExistStmt.Close(); cerr != nil {
-			err = fmt.Errorf("error closing checkTaskExistStmt: %w", cerr)
+	if q.checkTaskIsDeletedStmt != nil {
+		if cerr := q.checkTaskIsDeletedStmt.Close(); cerr != nil {
+			err = fmt.Errorf("error closing checkTaskIsDeletedStmt: %w", cerr)
 		}
 	}
 	if q.createListStmt != nil {
@@ -97,6 +115,36 @@ func (q *Queries) Close() error {
 	if q.findThemeStmt != nil {
 		if cerr := q.findThemeStmt.Close(); cerr != nil {
 			err = fmt.Errorf("error closing findThemeStmt: %w", cerr)
+		}
+	}
+	if q.getNewlyCreatedListsStmt != nil {
+		if cerr := q.getNewlyCreatedListsStmt.Close(); cerr != nil {
+			err = fmt.Errorf("error closing getNewlyCreatedListsStmt: %w", cerr)
+		}
+	}
+	if q.getNewlyCreatedTasksStmt != nil {
+		if cerr := q.getNewlyCreatedTasksStmt.Close(); cerr != nil {
+			err = fmt.Errorf("error closing getNewlyCreatedTasksStmt: %w", cerr)
+		}
+	}
+	if q.getNewlyDeletedListsStmt != nil {
+		if cerr := q.getNewlyDeletedListsStmt.Close(); cerr != nil {
+			err = fmt.Errorf("error closing getNewlyDeletedListsStmt: %w", cerr)
+		}
+	}
+	if q.getNewlyDeletedTasksStmt != nil {
+		if cerr := q.getNewlyDeletedTasksStmt.Close(); cerr != nil {
+			err = fmt.Errorf("error closing getNewlyDeletedTasksStmt: %w", cerr)
+		}
+	}
+	if q.getNewlyUpdatedListsStmt != nil {
+		if cerr := q.getNewlyUpdatedListsStmt.Close(); cerr != nil {
+			err = fmt.Errorf("error closing getNewlyUpdatedListsStmt: %w", cerr)
+		}
+	}
+	if q.getNewlyUpdatedTasksStmt != nil {
+		if cerr := q.getNewlyUpdatedTasksStmt.Close(); cerr != nil {
+			err = fmt.Errorf("error closing getNewlyUpdatedTasksStmt: %w", cerr)
 		}
 	}
 	if q.updateListStmt != nil {
@@ -146,33 +194,45 @@ func (q *Queries) queryRow(ctx context.Context, stmt *sql.Stmt, query string, ar
 }
 
 type Queries struct {
-	db                 DBTX
-	tx                 *sql.Tx
-	checkListExistStmt *sql.Stmt
-	checkTaskExistStmt *sql.Stmt
-	createListStmt     *sql.Stmt
-	createTaskStmt     *sql.Stmt
-	createThemeStmt    *sql.Stmt
-	deleteListStmt     *sql.Stmt
-	deleteTaskStmt     *sql.Stmt
-	findThemeStmt      *sql.Stmt
-	updateListStmt     *sql.Stmt
-	updateTaskStmt     *sql.Stmt
+	db                       DBTX
+	tx                       *sql.Tx
+	checkListIsDeletedStmt   *sql.Stmt
+	checkTaskIsDeletedStmt   *sql.Stmt
+	createListStmt           *sql.Stmt
+	createTaskStmt           *sql.Stmt
+	createThemeStmt          *sql.Stmt
+	deleteListStmt           *sql.Stmt
+	deleteTaskStmt           *sql.Stmt
+	findThemeStmt            *sql.Stmt
+	getNewlyCreatedListsStmt *sql.Stmt
+	getNewlyCreatedTasksStmt *sql.Stmt
+	getNewlyDeletedListsStmt *sql.Stmt
+	getNewlyDeletedTasksStmt *sql.Stmt
+	getNewlyUpdatedListsStmt *sql.Stmt
+	getNewlyUpdatedTasksStmt *sql.Stmt
+	updateListStmt           *sql.Stmt
+	updateTaskStmt           *sql.Stmt
 }
 
 func (q *Queries) WithTx(tx *sql.Tx) *Queries {
 	return &Queries{
-		db:                 tx,
-		tx:                 tx,
-		checkListExistStmt: q.checkListExistStmt,
-		checkTaskExistStmt: q.checkTaskExistStmt,
-		createListStmt:     q.createListStmt,
-		createTaskStmt:     q.createTaskStmt,
-		createThemeStmt:    q.createThemeStmt,
-		deleteListStmt:     q.deleteListStmt,
-		deleteTaskStmt:     q.deleteTaskStmt,
-		findThemeStmt:      q.findThemeStmt,
-		updateListStmt:     q.updateListStmt,
-		updateTaskStmt:     q.updateTaskStmt,
+		db:                       tx,
+		tx:                       tx,
+		checkListIsDeletedStmt:   q.checkListIsDeletedStmt,
+		checkTaskIsDeletedStmt:   q.checkTaskIsDeletedStmt,
+		createListStmt:           q.createListStmt,
+		createTaskStmt:           q.createTaskStmt,
+		createThemeStmt:          q.createThemeStmt,
+		deleteListStmt:           q.deleteListStmt,
+		deleteTaskStmt:           q.deleteTaskStmt,
+		findThemeStmt:            q.findThemeStmt,
+		getNewlyCreatedListsStmt: q.getNewlyCreatedListsStmt,
+		getNewlyCreatedTasksStmt: q.getNewlyCreatedTasksStmt,
+		getNewlyDeletedListsStmt: q.getNewlyDeletedListsStmt,
+		getNewlyDeletedTasksStmt: q.getNewlyDeletedTasksStmt,
+		getNewlyUpdatedListsStmt: q.getNewlyUpdatedListsStmt,
+		getNewlyUpdatedTasksStmt: q.getNewlyUpdatedTasksStmt,
+		updateListStmt:           q.updateListStmt,
+		updateTaskStmt:           q.updateTaskStmt,
 	}
 }

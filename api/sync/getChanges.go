@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/iskaa02/taskkit-server/db/models"
+	"gopkg.in/guregu/null.v4"
 )
 
 func getChanges(lastPulled time.Time, q *models.Queries) changes {
@@ -32,7 +33,7 @@ func getTaskChanges(lastPulled time.Time, q *models.Queries) taskChanges {
 	}
 	updated := make([]rawTask, len(rawUpdated))
 	for i := range rawUpdated {
-		created[i] = rawTask(rawCreated[i])
+		updated[i] = rawTask(rawUpdated[i])
 	}
 
 	deleted, err := q.GetNewlyDeletedTasks(ctx, lastPulled)
@@ -62,7 +63,7 @@ func getListChanges(lastPulled time.Time, q *models.Queries) listChanges {
 	}
 	updated := make([]rawList, len(rawUpdated))
 	for i := range rawUpdated {
-		created[i] = toRawList(rawCreated[i])
+		updated[i] = toRawList(models.GetNewlyCreatedListsRow(rawUpdated[i]))
 	}
 
 	deleted, err := q.GetNewlyDeletedLists(ctx, lastPulled)
@@ -80,9 +81,9 @@ func toRawList(l models.GetNewlyCreatedListsRow) rawList {
 	return rawList{
 		Name: l.Name,
 		ID:   l.ID,
-		Theme: theme{
+		Theme: Theme{
 			Primary:   l.Primary,
-			Secondary: l.Secondary,
+			Secondary: null.StringFrom(l.Secondary),
 		},
 	}
 }

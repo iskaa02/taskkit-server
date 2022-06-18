@@ -32,7 +32,6 @@ func (s sync) PullChanges(w http.ResponseWriter, r *http.Request) {
 		unixTS = args.LastPulledAt.Int64
 	}
 	lastPulledAt := time.Unix(unixTS, 0)
-	fmt.Println(lastPulledAt.Year())
 	changes := getChanges(lastPulledAt, q)
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(changes)

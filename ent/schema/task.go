@@ -9,6 +9,7 @@ import (
 	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
 	"github.com/iskaa02/taskkit-server/types"
+	"gopkg.in/guregu/null.v4"
 )
 
 // Task holds the schema definition for the Task entity.
@@ -22,9 +23,9 @@ func (Task) Fields() []ent.Field {
 		field.String("id"),
 		field.String("name"),
 		field.String("list_id"),
-		field.Text("description").Optional(),
-		field.Time("reminder").Optional(),
-		field.String("repeat").Optional(),
+		field.Text("description").Optional().GoType(null.String{}),
+		field.Time("reminder").Optional().GoType(null.Time{}),
+		field.String("repeat").Optional().GoType(null.String{}),
 		field.String("subtasks").GoType(&types.Subtasks{}),
 		field.Bool("is_completed").Default(false),
 		field.Bool("is_deleted").Default(false),

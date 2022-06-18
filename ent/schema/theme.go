@@ -6,6 +6,7 @@ import (
 	"entgo.io/ent/schema"
 	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
+	"gopkg.in/guregu/null.v4"
 )
 
 // Theme holds the schema definition for the Theme entity.
@@ -18,7 +19,7 @@ func (Theme) Fields() []ent.Field {
 	return []ent.Field{
 		field.Int64("id"),
 		field.String("primary"),
-		field.String("secondary").Optional(),
+		field.String("secondary").Optional().GoType(null.String{}),
 	}
 }
 

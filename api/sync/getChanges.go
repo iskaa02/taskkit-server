@@ -59,7 +59,9 @@ func getTaskChanges(lastPulled time.Time, c *ent.Client) taskChanges {
 
 func getListChanges(lastPulled time.Time, c *ent.Client) listChanges {
 	ctx := context.Background()
-	rawCreated, err := c.List.Query().Where(list.CreatedAtGTE(lastPulled)).All(ctx)
+	rawCreated, err := c.List.Query().
+		WithTheme().
+		Where(list.CreatedAtGTE(lastPulled)).All(ctx)
 	if err != nil {
 		fmt.Println(err)
 	}
@@ -74,6 +76,7 @@ func getListChanges(lastPulled time.Time, c *ent.Client) listChanges {
 				list.LastModifiedGTE(lastPulled),
 			),
 		).
+		WithTheme().
 		All(ctx)
 	if err != nil {
 		fmt.Println(err)
@@ -110,10 +113,7 @@ func toRawTask(t *ent.Task) rawTask {
 }
 
 func toRawList(l *ent.List) rawList {
-	theme, err := l.QueryTheme().Only(context.Background())
-	if err != nil {
-		fmt.Println(err)
-	}
+	theme := l.Edges.Theme
 	return rawList{
 		Name: l.Name,
 		ID:   l.ID,

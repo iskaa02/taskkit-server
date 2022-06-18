@@ -6,5 +6,5 @@ down:
 
 drop:
 	migrate -database "postgres://postgres:password@localhost:5432?sslmode=disable" -path ./schema drop
-ent :
+ent:
 	go generate ./ent

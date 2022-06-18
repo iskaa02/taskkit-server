@@ -11,6 +11,7 @@ import (
 	"github.com/iskaa02/taskkit-server/ent/list"
 	"github.com/iskaa02/taskkit-server/ent/task"
 	"github.com/iskaa02/taskkit-server/types"
+	"gopkg.in/guregu/null.v4"
 )
 
 // Task is the model entity for the Task schema.
@@ -23,11 +24,11 @@ type Task struct {
 	// ListID holds the value of the "list_id" field.
 	ListID string `json:"list_id,omitempty"`
 	// Description holds the value of the "description" field.
-	Description string `json:"description,omitempty"`
+	Description null.String `json:"description,omitempty"`
 	// Reminder holds the value of the "reminder" field.
-	Reminder time.Time `json:"reminder,omitempty"`
+	Reminder null.Time `json:"reminder,omitempty"`
 	// Repeat holds the value of the "repeat" field.
-	Repeat string `json:"repeat,omitempty"`
+	Repeat null.String `json:"repeat,omitempty"`
 	// Subtasks holds the value of the "subtasks" field.
 	Subtasks *types.Subtasks `json:"subtasks,omitempty"`
 	// IsCompleted holds the value of the "is_completed" field.
@@ -71,11 +72,15 @@ func (*Task) scanValues(columns []string) ([]interface{}, error) {
 	values := make([]interface{}, len(columns))
 	for i := range columns {
 		switch columns[i] {
+		case task.FieldDescription, task.FieldRepeat:
+			values[i] = new(null.String)
+		case task.FieldReminder:
+			values[i] = new(null.Time)
 		case task.FieldIsCompleted, task.FieldIsDeleted:
 			values[i] = new(sql.NullBool)
-		case task.FieldID, task.FieldName, task.FieldListID, task.FieldDescription, task.FieldRepeat:
+		case task.FieldID, task.FieldName, task.FieldListID:
 			values[i] = new(sql.NullString)
-		case task.FieldReminder, task.FieldLastModified, task.FieldCreatedAt:
+		case task.FieldLastModified, task.FieldCreatedAt:
 			values[i] = new(sql.NullTime)
 		case task.FieldSubtasks:
 			values[i] = new(types.Subtasks)
@@ -113,22 +118,22 @@ func (t *Task) assignValues(columns []string, values []interface{}) error {
 				t.ListID = value.String
 			}
 		case task.FieldDescription:
-			if value, ok := values[i].(*sql.NullString); !ok {
+			if value, ok := values[i].(*null.String); !ok {
 				return fmt.Errorf("unexpected type %T for field description", values[i])
-			} else if value.Valid {
-				t.Description = value.String
+			} else if value != nil {
+				t.Description = *value
 			}
 		case task.FieldReminder:
-			if value, ok := values[i].(*sql.NullTime); !ok {
+			if value, ok := values[i].(*null.Time); !ok {
 				return fmt.Errorf("unexpected type %T for field reminder", values[i])
-			} else if value.Valid {
-				t.Reminder = value.Time
+			} else if value != nil {
+				t.Reminder = *value
 			}
 		case task.FieldRepeat:
-			if value, ok := values[i].(*sql.NullString); !ok {
+			if value, ok := values[i].(*null.String); !ok {
 				return fmt.Errorf("unexpected type %T for field repeat", values[i])
-			} else if value.Valid {
-				t.Repeat = value.String
+			} else if value != nil {
+				t.Repeat = *value
 			}
 		case task.FieldSubtasks:
 			if value, ok := values[i].(*types.Subtasks); !ok {
@@ -198,11 +203,11 @@ func (t *Task) String() string {
 	builder.WriteString(", list_id=")
 	builder.WriteString(t.ListID)
 	builder.WriteString(", description=")
-	builder.WriteString(t.Description)
+	builder.WriteString(fmt.Sprintf("%v", t.Description))
 	builder.WriteString(", reminder=")
-	builder.WriteString(t.Reminder.Format(time.ANSIC))
+	builder.WriteString(fmt.Sprintf("%v", t.Reminder))
 	builder.WriteString(", repeat=")
-	builder.WriteString(t.Repeat)
+	builder.WriteString(fmt.Sprintf("%v", t.Repeat))
 	builder.WriteString(", subtasks=")
 	builder.WriteString(fmt.Sprintf("%v", t.Subtasks))
 	builder.WriteString(", is_completed=")

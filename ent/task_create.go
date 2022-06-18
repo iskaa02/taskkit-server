@@ -13,6 +13,7 @@ import (
 	"github.com/iskaa02/taskkit-server/ent/list"
 	"github.com/iskaa02/taskkit-server/ent/task"
 	"github.com/iskaa02/taskkit-server/types"
+	"gopkg.in/guregu/null.v4"
 )
 
 // TaskCreate is the builder for creating a Task entity.
@@ -35,43 +36,43 @@ func (tc *TaskCreate) SetListID(s string) *TaskCreate {
 }
 
 // SetDescription sets the "description" field.
-func (tc *TaskCreate) SetDescription(s string) *TaskCreate {
-	tc.mutation.SetDescription(s)
+func (tc *TaskCreate) SetDescription(n null.String) *TaskCreate {
+	tc.mutation.SetDescription(n)
 	return tc
 }
 
 // SetNillableDescription sets the "description" field if the given value is not nil.
-func (tc *TaskCreate) SetNillableDescription(s *string) *TaskCreate {
-	if s != nil {
-		tc.SetDescription(*s)
+func (tc *TaskCreate) SetNillableDescription(n *null.String) *TaskCreate {
+	if n != nil {
+		tc.SetDescription(*n)
 	}
 	return tc
 }
 
 // SetReminder sets the "reminder" field.
-func (tc *TaskCreate) SetReminder(t time.Time) *TaskCreate {
-	tc.mutation.SetReminder(t)
+func (tc *TaskCreate) SetReminder(n null.Time) *TaskCreate {
+	tc.mutation.SetReminder(n)
 	return tc
 }
 
 // SetNillableReminder sets the "reminder" field if the given value is not nil.
-func (tc *TaskCreate) SetNillableReminder(t *time.Time) *TaskCreate {
-	if t != nil {
-		tc.SetReminder(*t)
+func (tc *TaskCreate) SetNillableReminder(n *null.Time) *TaskCreate {
+	if n != nil {
+		tc.SetReminder(*n)
 	}
 	return tc
 }
 
 // SetRepeat sets the "repeat" field.
-func (tc *TaskCreate) SetRepeat(s string) *TaskCreate {
-	tc.mutation.SetRepeat(s)
+func (tc *TaskCreate) SetRepeat(n null.String) *TaskCreate {
+	tc.mutation.SetRepeat(n)
 	return tc
 }
 
 // SetNillableRepeat sets the "repeat" field if the given value is not nil.
-func (tc *TaskCreate) SetNillableRepeat(s *string) *TaskCreate {
-	if s != nil {
-		tc.SetRepeat(*s)
+func (tc *TaskCreate) SetNillableRepeat(n *null.String) *TaskCreate {
+	if n != nil {
+		tc.SetRepeat(*n)
 	}
 	return tc
 }

@@ -8,6 +8,7 @@ import (
 
 	"entgo.io/ent/dialect/sql"
 	"github.com/iskaa02/taskkit-server/ent/theme"
+	"gopkg.in/guregu/null.v4"
 )
 
 // Theme is the model entity for the Theme schema.
@@ -18,7 +19,7 @@ type Theme struct {
 	// Primary holds the value of the "primary" field.
 	Primary string `json:"primary,omitempty"`
 	// Secondary holds the value of the "secondary" field.
-	Secondary string `json:"secondary,omitempty"`
+	Secondary null.String `json:"secondary,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the ThemeQuery when eager-loading is set.
 	Edges ThemeEdges `json:"edges"`
@@ -47,9 +48,11 @@ func (*Theme) scanValues(columns []string) ([]interface{}, error) {
 	values := make([]interface{}, len(columns))
 	for i := range columns {
 		switch columns[i] {
+		case theme.FieldSecondary:
+			values[i] = new(null.String)
 		case theme.FieldID:
 			values[i] = new(sql.NullInt64)
-		case theme.FieldPrimary, theme.FieldSecondary:
+		case theme.FieldPrimary:
 			values[i] = new(sql.NullString)
 		default:
 			return nil, fmt.Errorf("unexpected column %q for type Theme", columns[i])
@@ -79,10 +82,10 @@ func (t *Theme) assignValues(columns []string, values []interface{}) error {
 				t.Primary = value.String
 			}
 		case theme.FieldSecondary:
-			if value, ok := values[i].(*sql.NullString); !ok {
+			if value, ok := values[i].(*null.String); !ok {
 				return fmt.Errorf("unexpected type %T for field secondary", values[i])
-			} else if value.Valid {
-				t.Secondary = value.String
+			} else if value != nil {
+				t.Secondary = *value
 			}
 		}
 	}
@@ -120,7 +123,7 @@ func (t *Theme) String() string {
 	builder.WriteString(", primary=")
 	builder.WriteString(t.Primary)
 	builder.WriteString(", secondary=")
-	builder.WriteString(t.Secondary)
+	builder.WriteString(fmt.Sprintf("%v", t.Secondary))
 	builder.WriteByte(')')
 	return builder.String()
 }

@@ -6,6 +6,7 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"github.com/iskaa02/taskkit-server/ent/predicate"
+	"gopkg.in/guregu/null.v4"
 )
 
 // ID filters vertices based on their ID field.
@@ -99,7 +100,7 @@ func Primary(v string) predicate.Theme {
 }
 
 // Secondary applies equality check predicate on the "secondary" field. It's identical to SecondaryEQ.
-func Secondary(v string) predicate.Theme {
+func Secondary(v null.String) predicate.Theme {
 	return predicate.Theme(func(s *sql.Selector) {
 		s.Where(sql.EQ(s.C(FieldSecondary), v))
 	})
@@ -217,21 +218,21 @@ func PrimaryContainsFold(v string) predicate.Theme {
 }
 
 // SecondaryEQ applies the EQ predicate on the "secondary" field.
-func SecondaryEQ(v string) predicate.Theme {
+func SecondaryEQ(v null.String) predicate.Theme {
 	return predicate.Theme(func(s *sql.Selector) {
 		s.Where(sql.EQ(s.C(FieldSecondary), v))
 	})
 }
 
 // SecondaryNEQ applies the NEQ predicate on the "secondary" field.
-func SecondaryNEQ(v string) predicate.Theme {
+func SecondaryNEQ(v null.String) predicate.Theme {
 	return predicate.Theme(func(s *sql.Selector) {
 		s.Where(sql.NEQ(s.C(FieldSecondary), v))
 	})
 }
 
 // SecondaryIn applies the In predicate on the "secondary" field.
-func SecondaryIn(vs ...string) predicate.Theme {
+func SecondaryIn(vs ...null.String) predicate.Theme {
 	v := make([]interface{}, len(vs))
 	for i := range v {
 		v[i] = vs[i]
@@ -248,7 +249,7 @@ func SecondaryIn(vs ...string) predicate.Theme {
 }
 
 // SecondaryNotIn applies the NotIn predicate on the "secondary" field.
-func SecondaryNotIn(vs ...string) predicate.Theme {
+func SecondaryNotIn(vs ...null.String) predicate.Theme {
 	v := make([]interface{}, len(vs))
 	for i := range v {
 		v[i] = vs[i]
@@ -265,51 +266,30 @@ func SecondaryNotIn(vs ...string) predicate.Theme {
 }
 
 // SecondaryGT applies the GT predicate on the "secondary" field.
-func SecondaryGT(v string) predicate.Theme {
+func SecondaryGT(v null.String) predicate.Theme {
 	return predicate.Theme(func(s *sql.Selector) {
 		s.Where(sql.GT(s.C(FieldSecondary), v))
 	})
 }
 
 // SecondaryGTE applies the GTE predicate on the "secondary" field.
-func SecondaryGTE(v string) predicate.Theme {
+func SecondaryGTE(v null.String) predicate.Theme {
 	return predicate.Theme(func(s *sql.Selector) {
 		s.Where(sql.GTE(s.C(FieldSecondary), v))
 	})
 }
 
 // SecondaryLT applies the LT predicate on the "secondary" field.
-func SecondaryLT(v string) predicate.Theme {
+func SecondaryLT(v null.String) predicate.Theme {
 	return predicate.Theme(func(s *sql.Selector) {
 		s.Where(sql.LT(s.C(FieldSecondary), v))
 	})
 }
 
 // SecondaryLTE applies the LTE predicate on the "secondary" field.
-func SecondaryLTE(v string) predicate.Theme {
+func SecondaryLTE(v null.String) predicate.Theme {
 	return predicate.Theme(func(s *sql.Selector) {
 		s.Where(sql.LTE(s.C(FieldSecondary), v))
-	})
-}
-
-// SecondaryContains applies the Contains predicate on the "secondary" field.
-func SecondaryContains(v string) predicate.Theme {
-	return predicate.Theme(func(s *sql.Selector) {
-		s.Where(sql.Contains(s.C(FieldSecondary), v))
-	})
-}
-
-// SecondaryHasPrefix applies the HasPrefix predicate on the "secondary" field.
-func SecondaryHasPrefix(v string) predicate.Theme {
-	return predicate.Theme(func(s *sql.Selector) {
-		s.Where(sql.HasPrefix(s.C(FieldSecondary), v))
-	})
-}
-
-// SecondaryHasSuffix applies the HasSuffix predicate on the "secondary" field.
-func SecondaryHasSuffix(v string) predicate.Theme {
-	return predicate.Theme(func(s *sql.Selector) {
-		s.Where(sql.HasSuffix(s.C(FieldSecondary), v))
 	})
 }
 
@@ -324,20 +304,6 @@ func SecondaryIsNil() predicate.Theme {
 func SecondaryNotNil() predicate.Theme {
 	return predicate.Theme(func(s *sql.Selector) {
 		s.Where(sql.NotNull(s.C(FieldSecondary)))
-	})
-}
-
-// SecondaryEqualFold applies the EqualFold predicate on the "secondary" field.
-func SecondaryEqualFold(v string) predicate.Theme {
-	return predicate.Theme(func(s *sql.Selector) {
-		s.Where(sql.EqualFold(s.C(FieldSecondary), v))
-	})
-}
-
-// SecondaryContainsFold applies the ContainsFold predicate on the "secondary" field.
-func SecondaryContainsFold(v string) predicate.Theme {
-	return predicate.Theme(func(s *sql.Selector) {
-		s.Where(sql.ContainsFold(s.C(FieldSecondary), v))
 	})
 }
 

@@ -13,6 +13,7 @@ import (
 	"github.com/iskaa02/taskkit-server/ent/list"
 	"github.com/iskaa02/taskkit-server/ent/predicate"
 	"github.com/iskaa02/taskkit-server/ent/theme"
+	"gopkg.in/guregu/null.v4"
 )
 
 // ThemeUpdate is the builder for updating Theme entities.
@@ -35,15 +36,15 @@ func (tu *ThemeUpdate) SetPrimary(s string) *ThemeUpdate {
 }
 
 // SetSecondary sets the "secondary" field.
-func (tu *ThemeUpdate) SetSecondary(s string) *ThemeUpdate {
-	tu.mutation.SetSecondary(s)
+func (tu *ThemeUpdate) SetSecondary(n null.String) *ThemeUpdate {
+	tu.mutation.SetSecondary(n)
 	return tu
 }
 
 // SetNillableSecondary sets the "secondary" field if the given value is not nil.
-func (tu *ThemeUpdate) SetNillableSecondary(s *string) *ThemeUpdate {
-	if s != nil {
-		tu.SetSecondary(*s)
+func (tu *ThemeUpdate) SetNillableSecondary(n *null.String) *ThemeUpdate {
+	if n != nil {
+		tu.SetSecondary(*n)
 	}
 	return tu
 }
@@ -267,15 +268,15 @@ func (tuo *ThemeUpdateOne) SetPrimary(s string) *ThemeUpdateOne {
 }
 
 // SetSecondary sets the "secondary" field.
-func (tuo *ThemeUpdateOne) SetSecondary(s string) *ThemeUpdateOne {
-	tuo.mutation.SetSecondary(s)
+func (tuo *ThemeUpdateOne) SetSecondary(n null.String) *ThemeUpdateOne {
+	tuo.mutation.SetSecondary(n)
 	return tuo
 }
 
 // SetNillableSecondary sets the "secondary" field if the given value is not nil.
-func (tuo *ThemeUpdateOne) SetNillableSecondary(s *string) *ThemeUpdateOne {
-	if s != nil {
-		tuo.SetSecondary(*s)
+func (tuo *ThemeUpdateOne) SetNillableSecondary(n *null.String) *ThemeUpdateOne {
+	if n != nil {
+		tuo.SetSecondary(*n)
 	}
 	return tuo
 }

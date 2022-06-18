@@ -9,6 +9,7 @@ import (
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"github.com/iskaa02/taskkit-server/ent/predicate"
 	"github.com/iskaa02/taskkit-server/types"
+	"gopkg.in/guregu/null.v4"
 )
 
 // ID filters vertices based on their ID field.
@@ -109,21 +110,21 @@ func ListID(v string) predicate.Task {
 }
 
 // Description applies equality check predicate on the "description" field. It's identical to DescriptionEQ.
-func Description(v string) predicate.Task {
+func Description(v null.String) predicate.Task {
 	return predicate.Task(func(s *sql.Selector) {
 		s.Where(sql.EQ(s.C(FieldDescription), v))
 	})
 }
 
 // Reminder applies equality check predicate on the "reminder" field. It's identical to ReminderEQ.
-func Reminder(v time.Time) predicate.Task {
+func Reminder(v null.Time) predicate.Task {
 	return predicate.Task(func(s *sql.Selector) {
 		s.Where(sql.EQ(s.C(FieldReminder), v))
 	})
 }
 
 // Repeat applies equality check predicate on the "repeat" field. It's identical to RepeatEQ.
-func Repeat(v string) predicate.Task {
+func Repeat(v null.String) predicate.Task {
 	return predicate.Task(func(s *sql.Selector) {
 		s.Where(sql.EQ(s.C(FieldRepeat), v))
 	})
@@ -387,21 +388,21 @@ func ListIDContainsFold(v string) predicate.Task {
 }
 
 // DescriptionEQ applies the EQ predicate on the "description" field.
-func DescriptionEQ(v string) predicate.Task {
+func DescriptionEQ(v null.String) predicate.Task {
 	return predicate.Task(func(s *sql.Selector) {
 		s.Where(sql.EQ(s.C(FieldDescription), v))
 	})
 }
 
 // DescriptionNEQ applies the NEQ predicate on the "description" field.
-func DescriptionNEQ(v string) predicate.Task {
+func DescriptionNEQ(v null.String) predicate.Task {
 	return predicate.Task(func(s *sql.Selector) {
 		s.Where(sql.NEQ(s.C(FieldDescription), v))
 	})
 }
 
 // DescriptionIn applies the In predicate on the "description" field.
-func DescriptionIn(vs ...string) predicate.Task {
+func DescriptionIn(vs ...null.String) predicate.Task {
 	v := make([]interface{}, len(vs))
 	for i := range v {
 		v[i] = vs[i]
@@ -418,7 +419,7 @@ func DescriptionIn(vs ...string) predicate.Task {
 }
 
 // DescriptionNotIn applies the NotIn predicate on the "description" field.
-func DescriptionNotIn(vs ...string) predicate.Task {
+func DescriptionNotIn(vs ...null.String) predicate.Task {
 	v := make([]interface{}, len(vs))
 	for i := range v {
 		v[i] = vs[i]
@@ -435,51 +436,30 @@ func DescriptionNotIn(vs ...string) predicate.Task {
 }
 
 // DescriptionGT applies the GT predicate on the "description" field.
-func DescriptionGT(v string) predicate.Task {
+func DescriptionGT(v null.String) predicate.Task {
 	return predicate.Task(func(s *sql.Selector) {
 		s.Where(sql.GT(s.C(FieldDescription), v))
 	})
 }
 
 // DescriptionGTE applies the GTE predicate on the "description" field.
-func DescriptionGTE(v string) predicate.Task {
+func DescriptionGTE(v null.String) predicate.Task {
 	return predicate.Task(func(s *sql.Selector) {
 		s.Where(sql.GTE(s.C(FieldDescription), v))
 	})
 }
 
 // DescriptionLT applies the LT predicate on the "description" field.
-func DescriptionLT(v string) predicate.Task {
+func DescriptionLT(v null.String) predicate.Task {
 	return predicate.Task(func(s *sql.Selector) {
 		s.Where(sql.LT(s.C(FieldDescription), v))
 	})
 }
 
 // DescriptionLTE applies the LTE predicate on the "description" field.
-func DescriptionLTE(v string) predicate.Task {
+func DescriptionLTE(v null.String) predicate.Task {
 	return predicate.Task(func(s *sql.Selector) {
 		s.Where(sql.LTE(s.C(FieldDescription), v))
-	})
-}
-
-// DescriptionContains applies the Contains predicate on the "description" field.
-func DescriptionContains(v string) predicate.Task {
-	return predicate.Task(func(s *sql.Selector) {
-		s.Where(sql.Contains(s.C(FieldDescription), v))
-	})
-}
-
-// DescriptionHasPrefix applies the HasPrefix predicate on the "description" field.
-func DescriptionHasPrefix(v string) predicate.Task {
-	return predicate.Task(func(s *sql.Selector) {
-		s.Where(sql.HasPrefix(s.C(FieldDescription), v))
-	})
-}
-
-// DescriptionHasSuffix applies the HasSuffix predicate on the "description" field.
-func DescriptionHasSuffix(v string) predicate.Task {
-	return predicate.Task(func(s *sql.Selector) {
-		s.Where(sql.HasSuffix(s.C(FieldDescription), v))
 	})
 }
 
@@ -497,36 +477,22 @@ func DescriptionNotNil() predicate.Task {
 	})
 }
 
-// DescriptionEqualFold applies the EqualFold predicate on the "description" field.
-func DescriptionEqualFold(v string) predicate.Task {
-	return predicate.Task(func(s *sql.Selector) {
-		s.Where(sql.EqualFold(s.C(FieldDescription), v))
-	})
-}
-
-// DescriptionContainsFold applies the ContainsFold predicate on the "description" field.
-func DescriptionContainsFold(v string) predicate.Task {
-	return predicate.Task(func(s *sql.Selector) {
-		s.Where(sql.ContainsFold(s.C(FieldDescription), v))
-	})
-}
-
 // ReminderEQ applies the EQ predicate on the "reminder" field.
-func ReminderEQ(v time.Time) predicate.Task {
+func ReminderEQ(v null.Time) predicate.Task {
 	return predicate.Task(func(s *sql.Selector) {
 		s.Where(sql.EQ(s.C(FieldReminder), v))
 	})
 }
 
 // ReminderNEQ applies the NEQ predicate on the "reminder" field.
-func ReminderNEQ(v time.Time) predicate.Task {
+func ReminderNEQ(v null.Time) predicate.Task {
 	return predicate.Task(func(s *sql.Selector) {
 		s.Where(sql.NEQ(s.C(FieldReminder), v))
 	})
 }
 
 // ReminderIn applies the In predicate on the "reminder" field.
-func ReminderIn(vs ...time.Time) predicate.Task {
+func ReminderIn(vs ...null.Time) predicate.Task {
 	v := make([]interface{}, len(vs))
 	for i := range v {
 		v[i] = vs[i]
@@ -543,7 +509,7 @@ func ReminderIn(vs ...time.Time) predicate.Task {
 }
 
 // ReminderNotIn applies the NotIn predicate on the "reminder" field.
-func ReminderNotIn(vs ...time.Time) predicate.Task {
+func ReminderNotIn(vs ...null.Time) predicate.Task {
 	v := make([]interface{}, len(vs))
 	for i := range v {
 		v[i] = vs[i]
@@ -560,28 +526,28 @@ func ReminderNotIn(vs ...time.Time) predicate.Task {
 }
 
 // ReminderGT applies the GT predicate on the "reminder" field.
-func ReminderGT(v time.Time) predicate.Task {
+func ReminderGT(v null.Time) predicate.Task {
 	return predicate.Task(func(s *sql.Selector) {
 		s.Where(sql.GT(s.C(FieldReminder), v))
 	})
 }
 
 // ReminderGTE applies the GTE predicate on the "reminder" field.
-func ReminderGTE(v time.Time) predicate.Task {
+func ReminderGTE(v null.Time) predicate.Task {
 	return predicate.Task(func(s *sql.Selector) {
 		s.Where(sql.GTE(s.C(FieldReminder), v))
 	})
 }
 
 // ReminderLT applies the LT predicate on the "reminder" field.
-func ReminderLT(v time.Time) predicate.Task {
+func ReminderLT(v null.Time) predicate.Task {
 	return predicate.Task(func(s *sql.Selector) {
 		s.Where(sql.LT(s.C(FieldReminder), v))
 	})
 }
 
 // ReminderLTE applies the LTE predicate on the "reminder" field.
-func ReminderLTE(v time.Time) predicate.Task {
+func ReminderLTE(v null.Time) predicate.Task {
 	return predicate.Task(func(s *sql.Selector) {
 		s.Where(sql.LTE(s.C(FieldReminder), v))
 	})
@@ -602,21 +568,21 @@ func ReminderNotNil() predicate.Task {
 }
 
 // RepeatEQ applies the EQ predicate on the "repeat" field.
-func RepeatEQ(v string) predicate.Task {
+func RepeatEQ(v null.String) predicate.Task {
 	return predicate.Task(func(s *sql.Selector) {
 		s.Where(sql.EQ(s.C(FieldRepeat), v))
 	})
 }
 
 // RepeatNEQ applies the NEQ predicate on the "repeat" field.
-func RepeatNEQ(v string) predicate.Task {
+func RepeatNEQ(v null.String) predicate.Task {
 	return predicate.Task(func(s *sql.Selector) {
 		s.Where(sql.NEQ(s.C(FieldRepeat), v))
 	})
 }
 
 // RepeatIn applies the In predicate on the "repeat" field.
-func RepeatIn(vs ...string) predicate.Task {
+func RepeatIn(vs ...null.String) predicate.Task {
 	v := make([]interface{}, len(vs))
 	for i := range v {
 		v[i] = vs[i]
@@ -633,7 +599,7 @@ func RepeatIn(vs ...string) predicate.Task {
 }
 
 // RepeatNotIn applies the NotIn predicate on the "repeat" field.
-func RepeatNotIn(vs ...string) predicate.Task {
+func RepeatNotIn(vs ...null.String) predicate.Task {
 	v := make([]interface{}, len(vs))
 	for i := range v {
 		v[i] = vs[i]
@@ -650,51 +616,30 @@ func RepeatNotIn(vs ...string) predicate.Task {
 }
 
 // RepeatGT applies the GT predicate on the "repeat" field.
-func RepeatGT(v string) predicate.Task {
+func RepeatGT(v null.String) predicate.Task {
 	return predicate.Task(func(s *sql.Selector) {
 		s.Where(sql.GT(s.C(FieldRepeat), v))
 	})
 }
 
 // RepeatGTE applies the GTE predicate on the "repeat" field.
-func RepeatGTE(v string) predicate.Task {
+func RepeatGTE(v null.String) predicate.Task {
 	return predicate.Task(func(s *sql.Selector) {
 		s.Where(sql.GTE(s.C(FieldRepeat), v))
 	})
 }
 
 // RepeatLT applies the LT predicate on the "repeat" field.
-func RepeatLT(v string) predicate.Task {
+func RepeatLT(v null.String) predicate.Task {
 	return predicate.Task(func(s *sql.Selector) {
 		s.Where(sql.LT(s.C(FieldRepeat), v))
 	})
 }
 
 // RepeatLTE applies the LTE predicate on the "repeat" field.
-func RepeatLTE(v string) predicate.Task {
+func RepeatLTE(v null.String) predicate.Task {
 	return predicate.Task(func(s *sql.Selector) {
 		s.Where(sql.LTE(s.C(FieldRepeat), v))
-	})
-}
-
-// RepeatContains applies the Contains predicate on the "repeat" field.
-func RepeatContains(v string) predicate.Task {
-	return predicate.Task(func(s *sql.Selector) {
-		s.Where(sql.Contains(s.C(FieldRepeat), v))
-	})
-}
-
-// RepeatHasPrefix applies the HasPrefix predicate on the "repeat" field.
-func RepeatHasPrefix(v string) predicate.Task {
-	return predicate.Task(func(s *sql.Selector) {
-		s.Where(sql.HasPrefix(s.C(FieldRepeat), v))
-	})
-}
-
-// RepeatHasSuffix applies the HasSuffix predicate on the "repeat" field.
-func RepeatHasSuffix(v string) predicate.Task {
-	return predicate.Task(func(s *sql.Selector) {
-		s.Where(sql.HasSuffix(s.C(FieldRepeat), v))
 	})
 }
 
@@ -709,20 +654,6 @@ func RepeatIsNil() predicate.Task {
 func RepeatNotNil() predicate.Task {
 	return predicate.Task(func(s *sql.Selector) {
 		s.Where(sql.NotNull(s.C(FieldRepeat)))
-	})
-}
-
-// RepeatEqualFold applies the EqualFold predicate on the "repeat" field.
-func RepeatEqualFold(v string) predicate.Task {
-	return predicate.Task(func(s *sql.Selector) {
-		s.Where(sql.EqualFold(s.C(FieldRepeat), v))
-	})
-}
-
-// RepeatContainsFold applies the ContainsFold predicate on the "repeat" field.
-func RepeatContainsFold(v string) predicate.Task {
-	return predicate.Task(func(s *sql.Selector) {
-		s.Where(sql.ContainsFold(s.C(FieldRepeat), v))
 	})
 }
 

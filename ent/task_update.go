@@ -15,6 +15,7 @@ import (
 	"github.com/iskaa02/taskkit-server/ent/predicate"
 	"github.com/iskaa02/taskkit-server/ent/task"
 	"github.com/iskaa02/taskkit-server/types"
+	"gopkg.in/guregu/null.v4"
 )
 
 // TaskUpdate is the builder for updating Task entities.
@@ -43,15 +44,15 @@ func (tu *TaskUpdate) SetListID(s string) *TaskUpdate {
 }
 
 // SetDescription sets the "description" field.
-func (tu *TaskUpdate) SetDescription(s string) *TaskUpdate {
-	tu.mutation.SetDescription(s)
+func (tu *TaskUpdate) SetDescription(n null.String) *TaskUpdate {
+	tu.mutation.SetDescription(n)
 	return tu
 }
 
 // SetNillableDescription sets the "description" field if the given value is not nil.
-func (tu *TaskUpdate) SetNillableDescription(s *string) *TaskUpdate {
-	if s != nil {
-		tu.SetDescription(*s)
+func (tu *TaskUpdate) SetNillableDescription(n *null.String) *TaskUpdate {
+	if n != nil {
+		tu.SetDescription(*n)
 	}
 	return tu
 }
@@ -63,15 +64,15 @@ func (tu *TaskUpdate) ClearDescription() *TaskUpdate {
 }
 
 // SetReminder sets the "reminder" field.
-func (tu *TaskUpdate) SetReminder(t time.Time) *TaskUpdate {
-	tu.mutation.SetReminder(t)
+func (tu *TaskUpdate) SetReminder(n null.Time) *TaskUpdate {
+	tu.mutation.SetReminder(n)
 	return tu
 }
 
 // SetNillableReminder sets the "reminder" field if the given value is not nil.
-func (tu *TaskUpdate) SetNillableReminder(t *time.Time) *TaskUpdate {
-	if t != nil {
-		tu.SetReminder(*t)
+func (tu *TaskUpdate) SetNillableReminder(n *null.Time) *TaskUpdate {
+	if n != nil {
+		tu.SetReminder(*n)
 	}
 	return tu
 }
@@ -83,15 +84,15 @@ func (tu *TaskUpdate) ClearReminder() *TaskUpdate {
 }
 
 // SetRepeat sets the "repeat" field.
-func (tu *TaskUpdate) SetRepeat(s string) *TaskUpdate {
-	tu.mutation.SetRepeat(s)
+func (tu *TaskUpdate) SetRepeat(n null.String) *TaskUpdate {
+	tu.mutation.SetRepeat(n)
 	return tu
 }
 
 // SetNillableRepeat sets the "repeat" field if the given value is not nil.
-func (tu *TaskUpdate) SetNillableRepeat(s *string) *TaskUpdate {
-	if s != nil {
-		tu.SetRepeat(*s)
+func (tu *TaskUpdate) SetNillableRepeat(n *null.String) *TaskUpdate {
+	if n != nil {
+		tu.SetRepeat(*n)
 	}
 	return tu
 }
@@ -414,15 +415,15 @@ func (tuo *TaskUpdateOne) SetListID(s string) *TaskUpdateOne {
 }
 
 // SetDescription sets the "description" field.
-func (tuo *TaskUpdateOne) SetDescription(s string) *TaskUpdateOne {
-	tuo.mutation.SetDescription(s)
+func (tuo *TaskUpdateOne) SetDescription(n null.String) *TaskUpdateOne {
+	tuo.mutation.SetDescription(n)
 	return tuo
 }
 
 // SetNillableDescription sets the "description" field if the given value is not nil.
-func (tuo *TaskUpdateOne) SetNillableDescription(s *string) *TaskUpdateOne {
-	if s != nil {
-		tuo.SetDescription(*s)
+func (tuo *TaskUpdateOne) SetNillableDescription(n *null.String) *TaskUpdateOne {
+	if n != nil {
+		tuo.SetDescription(*n)
 	}
 	return tuo
 }
@@ -434,15 +435,15 @@ func (tuo *TaskUpdateOne) ClearDescription() *TaskUpdateOne {
 }
 
 // SetReminder sets the "reminder" field.
-func (tuo *TaskUpdateOne) SetReminder(t time.Time) *TaskUpdateOne {
-	tuo.mutation.SetReminder(t)
+func (tuo *TaskUpdateOne) SetReminder(n null.Time) *TaskUpdateOne {
+	tuo.mutation.SetReminder(n)
 	return tuo
 }
 
 // SetNillableReminder sets the "reminder" field if the given value is not nil.
-func (tuo *TaskUpdateOne) SetNillableReminder(t *time.Time) *TaskUpdateOne {
-	if t != nil {
-		tuo.SetReminder(*t)
+func (tuo *TaskUpdateOne) SetNillableReminder(n *null.Time) *TaskUpdateOne {
+	if n != nil {
+		tuo.SetReminder(*n)
 	}
 	return tuo
 }
@@ -454,15 +455,15 @@ func (tuo *TaskUpdateOne) ClearReminder() *TaskUpdateOne {
 }
 
 // SetRepeat sets the "repeat" field.
-func (tuo *TaskUpdateOne) SetRepeat(s string) *TaskUpdateOne {
-	tuo.mutation.SetRepeat(s)
+func (tuo *TaskUpdateOne) SetRepeat(n null.String) *TaskUpdateOne {
+	tuo.mutation.SetRepeat(n)
 	return tuo
 }
 
 // SetNillableRepeat sets the "repeat" field if the given value is not nil.
-func (tuo *TaskUpdateOne) SetNillableRepeat(s *string) *TaskUpdateOne {
-	if s != nil {
-		tuo.SetRepeat(*s)
+func (tuo *TaskUpdateOne) SetNillableRepeat(n *null.String) *TaskUpdateOne {
+	if n != nil {
+		tuo.SetRepeat(*n)
 	}
 	return tuo
 }

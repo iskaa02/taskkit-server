@@ -11,6 +11,7 @@ import (
 	"entgo.io/ent/schema/field"
 	"github.com/iskaa02/taskkit-server/ent/list"
 	"github.com/iskaa02/taskkit-server/ent/theme"
+	"gopkg.in/guregu/null.v4"
 )
 
 // ThemeCreate is the builder for creating a Theme entity.
@@ -27,15 +28,15 @@ func (tc *ThemeCreate) SetPrimary(s string) *ThemeCreate {
 }
 
 // SetSecondary sets the "secondary" field.
-func (tc *ThemeCreate) SetSecondary(s string) *ThemeCreate {
-	tc.mutation.SetSecondary(s)
+func (tc *ThemeCreate) SetSecondary(n null.String) *ThemeCreate {
+	tc.mutation.SetSecondary(n)
 	return tc
 }
 
 // SetNillableSecondary sets the "secondary" field if the given value is not nil.
-func (tc *ThemeCreate) SetNillableSecondary(s *string) *ThemeCreate {
-	if s != nil {
-		tc.SetSecondary(*s)
+func (tc *ThemeCreate) SetNillableSecondary(n *null.String) *ThemeCreate {
+	if n != nil {
+		tc.SetSecondary(*n)
 	}
 	return tc
 }

@@ -14,6 +14,7 @@ import (
 	"github.com/iskaa02/taskkit-server/ent/task"
 	"github.com/iskaa02/taskkit-server/ent/theme"
 	"github.com/iskaa02/taskkit-server/types"
+	"gopkg.in/guregu/null.v4"
 
 	"entgo.io/ent"
 )
@@ -713,9 +714,9 @@ type TaskMutation struct {
 	typ           string
 	id            *string
 	name          *string
-	description   *string
-	reminder      *time.Time
-	repeat        *string
+	description   *null.String
+	reminder      *null.Time
+	repeat        *null.String
 	subtasks      **types.Subtasks
 	is_completed  *bool
 	is_deleted    *bool
@@ -906,12 +907,12 @@ func (m *TaskMutation) ResetListID() {
 }
 
 // SetDescription sets the "description" field.
-func (m *TaskMutation) SetDescription(s string) {
-	m.description = &s
+func (m *TaskMutation) SetDescription(n null.String) {
+	m.description = &n
 }
 
 // Description returns the value of the "description" field in the mutation.
-func (m *TaskMutation) Description() (r string, exists bool) {
+func (m *TaskMutation) Description() (r null.String, exists bool) {
 	v := m.description
 	if v == nil {
 		return
@@ -922,7 +923,7 @@ func (m *TaskMutation) Description() (r string, exists bool) {
 // OldDescription returns the old "description" field's value of the Task entity.
 // If the Task object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *TaskMutation) OldDescription(ctx context.Context) (v string, err error) {
+func (m *TaskMutation) OldDescription(ctx context.Context) (v null.String, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldDescription is only allowed on UpdateOne operations")
 	}
@@ -955,12 +956,12 @@ func (m *TaskMutation) ResetDescription() {
 }
 
 // SetReminder sets the "reminder" field.
-func (m *TaskMutation) SetReminder(t time.Time) {
-	m.reminder = &t
+func (m *TaskMutation) SetReminder(n null.Time) {
+	m.reminder = &n
 }
 
 // Reminder returns the value of the "reminder" field in the mutation.
-func (m *TaskMutation) Reminder() (r time.Time, exists bool) {
+func (m *TaskMutation) Reminder() (r null.Time, exists bool) {
 	v := m.reminder
 	if v == nil {
 		return
@@ -971,7 +972,7 @@ func (m *TaskMutation) Reminder() (r time.Time, exists bool) {
 // OldReminder returns the old "reminder" field's value of the Task entity.
 // If the Task object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *TaskMutation) OldReminder(ctx context.Context) (v time.Time, err error) {
+func (m *TaskMutation) OldReminder(ctx context.Context) (v null.Time, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldReminder is only allowed on UpdateOne operations")
 	}
@@ -1004,12 +1005,12 @@ func (m *TaskMutation) ResetReminder() {
 }
 
 // SetRepeat sets the "repeat" field.
-func (m *TaskMutation) SetRepeat(s string) {
-	m.repeat = &s
+func (m *TaskMutation) SetRepeat(n null.String) {
+	m.repeat = &n
 }
 
 // Repeat returns the value of the "repeat" field in the mutation.
-func (m *TaskMutation) Repeat() (r string, exists bool) {
+func (m *TaskMutation) Repeat() (r null.String, exists bool) {
 	v := m.repeat
 	if v == nil {
 		return
@@ -1020,7 +1021,7 @@ func (m *TaskMutation) Repeat() (r string, exists bool) {
 // OldRepeat returns the old "repeat" field's value of the Task entity.
 // If the Task object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *TaskMutation) OldRepeat(ctx context.Context) (v string, err error) {
+func (m *TaskMutation) OldRepeat(ctx context.Context) (v null.String, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldRepeat is only allowed on UpdateOne operations")
 	}
@@ -1389,21 +1390,21 @@ func (m *TaskMutation) SetField(name string, value ent.Value) error {
 		m.SetListID(v)
 		return nil
 	case task.FieldDescription:
-		v, ok := value.(string)
+		v, ok := value.(null.String)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetDescription(v)
 		return nil
 	case task.FieldReminder:
-		v, ok := value.(time.Time)
+		v, ok := value.(null.Time)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetReminder(v)
 		return nil
 	case task.FieldRepeat:
-		v, ok := value.(string)
+		v, ok := value.(null.String)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
@@ -1631,7 +1632,7 @@ type ThemeMutation struct {
 	typ           string
 	id            *int64
 	primary       *string
-	secondary     *string
+	secondary     *null.String
 	clearedFields map[string]struct{}
 	list          map[string]struct{}
 	removedlist   map[string]struct{}
@@ -1782,12 +1783,12 @@ func (m *ThemeMutation) ResetPrimary() {
 }
 
 // SetSecondary sets the "secondary" field.
-func (m *ThemeMutation) SetSecondary(s string) {
-	m.secondary = &s
+func (m *ThemeMutation) SetSecondary(n null.String) {
+	m.secondary = &n
 }
 
 // Secondary returns the value of the "secondary" field in the mutation.
-func (m *ThemeMutation) Secondary() (r string, exists bool) {
+func (m *ThemeMutation) Secondary() (r null.String, exists bool) {
 	v := m.secondary
 	if v == nil {
 		return
@@ -1798,7 +1799,7 @@ func (m *ThemeMutation) Secondary() (r string, exists bool) {
 // OldSecondary returns the old "secondary" field's value of the Theme entity.
 // If the Theme object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *ThemeMutation) OldSecondary(ctx context.Context) (v string, err error) {
+func (m *ThemeMutation) OldSecondary(ctx context.Context) (v null.String, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldSecondary is only allowed on UpdateOne operations")
 	}
@@ -1952,7 +1953,7 @@ func (m *ThemeMutation) SetField(name string, value ent.Value) error {
 		m.SetPrimary(v)
 		return nil
 	case theme.FieldSecondary:
-		v, ok := value.(string)
+		v, ok := value.(null.String)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}

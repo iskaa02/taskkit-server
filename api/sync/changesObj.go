@@ -5,15 +5,24 @@ import (
 	"database/sql"
 	"errors"
 
-	"github.com/iskaa02/taskkit-server/db/models"
 	"github.com/iskaa02/taskkit-server/ent"
 	"github.com/iskaa02/taskkit-server/ent/theme"
+	"github.com/iskaa02/taskkit-server/types"
 	"gopkg.in/guregu/null.v4"
 )
 
 type (
-	rawTask models.GetNewlyCreatedTasksRow
-	Theme   struct {
+	rawTask struct {
+		ID          string
+		Description null.String
+		Name        string
+		Subtasks    types.Subtasks
+		Repeat      null.String
+		Reminder    null.Time
+		ListID      string
+		IsCompleted bool
+	}
+	Theme struct {
 		Primary   string      `json:"primary"`
 		Secondary null.String `json:"secondary"`
 	}
@@ -39,12 +48,12 @@ func (t Theme) findTheme(c *ent.Tx, ctx context.Context) (themeID int64, err err
 	a := ent.ThemeClient{}
 	themeID, err = c.Theme.Query().Where(
 		theme.Primary(t.Primary),
-		theme.Or(theme.Secondary(t.Secondary.String), theme.SecondaryIsNil()),
+		theme.Or(theme.Secondary(t.Secondary)),
 	).OnlyID(ctx)
 	if err == sql.ErrNoRows {
 		new := a.Create().SetPrimary(t.Primary)
 		if t.Secondary.Valid {
-			new.SetSecondary(t.Secondary.String)
+			new.SetSecondary(t.Secondary)
 		}
 		var newTheme *ent.Theme
 		newTheme, err = new.Save(ctx)
@@ -68,19 +77,14 @@ func (t rawTask) Update(c *ent.Tx, ctx context.Context) error {
 		return errors.New("conflict")
 	}
 
-	update := task.Update().
-		SetName(t.Name).SetListID(t.ListID).SetSubtasks(&t.Subtasks).SetIsCompleted(t.IsCompleted)
-	if t.Description.Valid {
-		update.SetNillableDescription(&t.Description.String)
-	}
-	if t.Reminder.Valid {
-		update.SetNillableReminder(&t.Reminder.Time)
-	}
-	if t.Repeat.Valid {
-		update.SetNillableRepeat(&t.Repeat.String)
-	}
-
-	return update.Exec(ctx)
+	return task.Update().
+		SetName(t.Name).
+		SetListID(t.ListID).
+		SetSubtasks(&t.Subtasks).
+		SetIsCompleted(t.IsCompleted).
+		SetDescription(t.Description).
+		SetReminder(t.Reminder).
+		SetRepeat(t.Repeat).Exec(ctx)
 }
 
 func (l rawList) Update(client *ent.Tx, ctx context.Context) error {

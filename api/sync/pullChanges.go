@@ -6,7 +6,8 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/iskaa02/taskkit-server/db/models"
+	entsql "entgo.io/ent/dialect/sql"
+	"github.com/iskaa02/taskkit-server/ent"
 	"gopkg.in/guregu/null.v4"
 )
 
@@ -26,13 +27,14 @@ func (s sync) PullChanges(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "bad JSON format", http.StatusBadRequest)
 		return
 	}
-	q := models.New(s.db)
+	entDriver := entsql.OpenDB("postgres", s.db)
+	client := ent.NewClient(ent.Driver(entDriver))
 	unixTS := int64(0)
 	if args.LastPulledAt.Valid {
 		unixTS = args.LastPulledAt.Int64
 	}
 	lastPulledAt := time.Unix(unixTS, 0)
-	changes := getChanges(lastPulledAt, q)
+	changes := getChanges(lastPulledAt, client)
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(changes)
 }

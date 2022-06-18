@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"errors"
+	"fmt"
 
 	"github.com/iskaa02/taskkit-server/ent"
 	"github.com/iskaa02/taskkit-server/ent/theme"
@@ -13,14 +14,14 @@ import (
 
 type (
 	rawTask struct {
-		ID          string
-		Description null.String
-		Name        string
-		Subtasks    types.Subtasks
-		Repeat      null.String
-		Reminder    null.Time
-		ListID      string
-		IsCompleted bool
+		ID          string         `json:"id"`
+		Description null.String    `json:"description"`
+		Name        string         `json:"name"`
+		Subtasks    types.Subtasks `json:"subtasks"`
+		Repeat      null.String    `json:"repeat"`
+		Reminder    null.Time      `json:"reminder"`
+		ListID      string         `json:"list_id"`
+		IsCompleted bool           `json:"is_completed"`
 	}
 	Theme struct {
 		Primary   string      `json:"primary"`
@@ -77,6 +78,7 @@ func (t rawTask) Update(c *ent.Tx, ctx context.Context) error {
 		return errors.New("conflict")
 	}
 
+	fmt.Println("listid", t.ListID)
 	return task.Update().
 		SetName(t.Name).
 		SetListID(t.ListID).

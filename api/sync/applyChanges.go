@@ -6,28 +6,27 @@ import (
 	"github.com/iskaa02/taskkit-server/ent"
 )
 
-func applyTaskChanges(tc taskChanges, client *ent.Tx) error {
+func applyTaskChanges(tc taskChanges, c *ent.Tx) error {
 	ctx := context.Background()
 	var err error
 	for _, f := range tc.Created {
-		err = f.Update(client, ctx)
+		err = f.Update(c, ctx)
 		if err != nil {
 			return err
 		}
 	}
 	for _, f := range tc.Updated {
-		err = f.Update(client, ctx)
+		err = f.Update(c, ctx)
 		if err != nil {
 			return err
 		}
 	}
-	// for _, id := range tc.Deleted {
-	// 	err = q.DeleteTask(context.Background(), id)
-	// 	if err != nil {
-	// 		// handle error
-	// 		return err
-	// 	}
-	// }
+	for _, id := range tc.Deleted {
+		err = c.Task.UpdateOneID(id).SetIsDeleted(true).Exec(ctx)
+		if err != nil {
+			return err
+		}
+	}
 	return nil
 }
 
@@ -46,11 +45,11 @@ func applyListChanges(lc listChanges, c *ent.Tx) error {
 			return err
 		}
 	}
-	// for _, id := range lc.Deleted {
-	// 	err = c.DeleteList(context.Background(), id)
-	// 	if err != nil {
-	// 		return err
-	// 	}
-	// }
+	for _, id := range lc.Deleted {
+		err = c.List.UpdateOneID(id).SetIsDeleted(true).Exec(ctx)
+		if err != nil {
+			return err
+		}
+	}
 	return err
 }

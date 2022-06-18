@@ -8,7 +8,7 @@ CREATE TABLE list (
     id VARCHAR PRIMARY KEY,
     name VARCHAR NOT NULL,
     theme_id INT NOT NULL REFERENCES theme(id),
-    is_deleted boolean NOT NULL DEFAULT FALSE,
+    is_deleted BOOLEAN NOT NULL DEFAULT FALSE,
     last_modified TIMESTAMP NOT NULL DEFAULT clock_timestamp(),
     created_at TIMESTAMP NOT NULL DEFAULT clock_timestamp()
 );
@@ -16,7 +16,7 @@ CREATE TABLE list (
 CREATE TABLE task (
     id VARCHAR PRIMARY KEY,
     name VARCHAR NOT NULL,
-    subtasks JSONB, 
+    subtasks JSONB NOT NULL DEFAULT '{}', 
     list_id VARCHAR NOT NULL REFERENCES list(id), 
     description  TEXT,
     reminder TIMESTAMP,

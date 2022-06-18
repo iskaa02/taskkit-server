@@ -4,7 +4,6 @@ import (
 	"context"
 	"database/sql"
 	"errors"
-	"fmt"
 
 	"github.com/iskaa02/taskkit-server/ent"
 	"github.com/iskaa02/taskkit-server/ent/theme"
@@ -78,7 +77,6 @@ func (t rawTask) Update(c *ent.Tx, ctx context.Context) error {
 		return errors.New("conflict")
 	}
 
-	fmt.Println("listid", t.ListID)
 	return task.Update().
 		SetName(t.Name).
 		SetListID(t.ListID).

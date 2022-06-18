@@ -29,7 +29,7 @@ type ListQuery struct {
 	predicates []predicate.List
 	// eager-loading edges.
 	withTheme *ThemeQuery
-	withTask  *TaskQuery
+	withTasks *TaskQuery
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -88,8 +88,8 @@ func (lq *ListQuery) QueryTheme() *ThemeQuery {
 	return query
 }
 
-// QueryTask chains the current query on the "task" edge.
-func (lq *ListQuery) QueryTask() *TaskQuery {
+// QueryTasks chains the current query on the "tasks" edge.
+func (lq *ListQuery) QueryTasks() *TaskQuery {
 	query := &TaskQuery{config: lq.config}
 	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
 		if err := lq.prepareQuery(ctx); err != nil {
@@ -102,7 +102,7 @@ func (lq *ListQuery) QueryTask() *TaskQuery {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(list.Table, list.FieldID, selector),
 			sqlgraph.To(task.Table, task.FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, list.TaskTable, list.TaskColumn),
+			sqlgraph.Edge(sqlgraph.O2M, false, list.TasksTable, list.TasksColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(lq.driver.Dialect(), step)
 		return fromU, nil
@@ -292,7 +292,7 @@ func (lq *ListQuery) Clone() *ListQuery {
 		order:      append([]OrderFunc{}, lq.order...),
 		predicates: append([]predicate.List{}, lq.predicates...),
 		withTheme:  lq.withTheme.Clone(),
-		withTask:   lq.withTask.Clone(),
+		withTasks:  lq.withTasks.Clone(),
 		// clone intermediate query.
 		sql:    lq.sql.Clone(),
 		path:   lq.path,
@@ -311,14 +311,14 @@ func (lq *ListQuery) WithTheme(opts ...func(*ThemeQuery)) *ListQuery {
 	return lq
 }
 
-// WithTask tells the query-builder to eager-load the nodes that are connected to
-// the "task" edge. The optional arguments are used to configure the query builder of the edge.
-func (lq *ListQuery) WithTask(opts ...func(*TaskQuery)) *ListQuery {
+// WithTasks tells the query-builder to eager-load the nodes that are connected to
+// the "tasks" edge. The optional arguments are used to configure the query builder of the edge.
+func (lq *ListQuery) WithTasks(opts ...func(*TaskQuery)) *ListQuery {
 	query := &TaskQuery{config: lq.config}
 	for _, opt := range opts {
 		opt(query)
 	}
-	lq.withTask = query
+	lq.withTasks = query
 	return lq
 }
 
@@ -389,7 +389,7 @@ func (lq *ListQuery) sqlAll(ctx context.Context) ([]*List, error) {
 		_spec       = lq.querySpec()
 		loadedTypes = [2]bool{
 			lq.withTheme != nil,
-			lq.withTask != nil,
+			lq.withTasks != nil,
 		}
 	)
 	_spec.ScanValues = func(columns []string) ([]interface{}, error) {
@@ -438,16 +438,16 @@ func (lq *ListQuery) sqlAll(ctx context.Context) ([]*List, error) {
 		}
 	}
 
-	if query := lq.withTask; query != nil {
+	if query := lq.withTasks; query != nil {
 		fks := make([]driver.Value, 0, len(nodes))
 		nodeids := make(map[string]*List)
 		for i := range nodes {
 			fks = append(fks, nodes[i].ID)
 			nodeids[nodes[i].ID] = nodes[i]
-			nodes[i].Edges.Task = []*Task{}
+			nodes[i].Edges.Tasks = []*Task{}
 		}
 		query.Where(predicate.Task(func(s *sql.Selector) {
-			s.Where(sql.InValues(list.TaskColumn, fks...))
+			s.Where(sql.InValues(list.TasksColumn, fks...))
 		}))
 		neighbors, err := query.All(ctx)
 		if err != nil {
@@ -459,7 +459,7 @@ func (lq *ListQuery) sqlAll(ctx context.Context) ([]*List, error) {
 			if !ok {
 				return nil, fmt.Errorf(`unexpected foreign-key "list_id" returned %v for node %v`, fk, n.ID)
 			}
-			node.Edges.Task = append(node.Edges.Task, n)
+			node.Edges.Tasks = append(node.Edges.Tasks, n)
 		}
 	}
 

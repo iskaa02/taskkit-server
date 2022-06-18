@@ -55,14 +55,14 @@ func (tu *ThemeUpdate) ClearSecondary() *ThemeUpdate {
 	return tu
 }
 
-// AddListIDs adds the "list" edge to the List entity by IDs.
+// AddListIDs adds the "lists" edge to the List entity by IDs.
 func (tu *ThemeUpdate) AddListIDs(ids ...string) *ThemeUpdate {
 	tu.mutation.AddListIDs(ids...)
 	return tu
 }
 
-// AddList adds the "list" edges to the List entity.
-func (tu *ThemeUpdate) AddList(l ...*List) *ThemeUpdate {
+// AddLists adds the "lists" edges to the List entity.
+func (tu *ThemeUpdate) AddLists(l ...*List) *ThemeUpdate {
 	ids := make([]string, len(l))
 	for i := range l {
 		ids[i] = l[i].ID
@@ -75,20 +75,20 @@ func (tu *ThemeUpdate) Mutation() *ThemeMutation {
 	return tu.mutation
 }
 
-// ClearList clears all "list" edges to the List entity.
-func (tu *ThemeUpdate) ClearList() *ThemeUpdate {
-	tu.mutation.ClearList()
+// ClearLists clears all "lists" edges to the List entity.
+func (tu *ThemeUpdate) ClearLists() *ThemeUpdate {
+	tu.mutation.ClearLists()
 	return tu
 }
 
-// RemoveListIDs removes the "list" edge to List entities by IDs.
+// RemoveListIDs removes the "lists" edge to List entities by IDs.
 func (tu *ThemeUpdate) RemoveListIDs(ids ...string) *ThemeUpdate {
 	tu.mutation.RemoveListIDs(ids...)
 	return tu
 }
 
-// RemoveList removes "list" edges to List entities.
-func (tu *ThemeUpdate) RemoveList(l ...*List) *ThemeUpdate {
+// RemoveLists removes "lists" edges to List entities.
+func (tu *ThemeUpdate) RemoveLists(l ...*List) *ThemeUpdate {
 	ids := make([]string, len(l))
 	for i := range l {
 		ids[i] = l[i].ID
@@ -188,12 +188,12 @@ func (tu *ThemeUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Column: theme.FieldSecondary,
 		})
 	}
-	if tu.mutation.ListCleared() {
+	if tu.mutation.ListsCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   theme.ListTable,
-			Columns: []string{theme.ListColumn},
+			Table:   theme.ListsTable,
+			Columns: []string{theme.ListsColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
@@ -204,12 +204,12 @@ func (tu *ThemeUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := tu.mutation.RemovedListIDs(); len(nodes) > 0 && !tu.mutation.ListCleared() {
+	if nodes := tu.mutation.RemovedListsIDs(); len(nodes) > 0 && !tu.mutation.ListsCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   theme.ListTable,
-			Columns: []string{theme.ListColumn},
+			Table:   theme.ListsTable,
+			Columns: []string{theme.ListsColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
@@ -223,12 +223,12 @@ func (tu *ThemeUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := tu.mutation.ListIDs(); len(nodes) > 0 {
+	if nodes := tu.mutation.ListsIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   theme.ListTable,
-			Columns: []string{theme.ListColumn},
+			Table:   theme.ListsTable,
+			Columns: []string{theme.ListsColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
@@ -287,14 +287,14 @@ func (tuo *ThemeUpdateOne) ClearSecondary() *ThemeUpdateOne {
 	return tuo
 }
 
-// AddListIDs adds the "list" edge to the List entity by IDs.
+// AddListIDs adds the "lists" edge to the List entity by IDs.
 func (tuo *ThemeUpdateOne) AddListIDs(ids ...string) *ThemeUpdateOne {
 	tuo.mutation.AddListIDs(ids...)
 	return tuo
 }
 
-// AddList adds the "list" edges to the List entity.
-func (tuo *ThemeUpdateOne) AddList(l ...*List) *ThemeUpdateOne {
+// AddLists adds the "lists" edges to the List entity.
+func (tuo *ThemeUpdateOne) AddLists(l ...*List) *ThemeUpdateOne {
 	ids := make([]string, len(l))
 	for i := range l {
 		ids[i] = l[i].ID
@@ -307,20 +307,20 @@ func (tuo *ThemeUpdateOne) Mutation() *ThemeMutation {
 	return tuo.mutation
 }
 
-// ClearList clears all "list" edges to the List entity.
-func (tuo *ThemeUpdateOne) ClearList() *ThemeUpdateOne {
-	tuo.mutation.ClearList()
+// ClearLists clears all "lists" edges to the List entity.
+func (tuo *ThemeUpdateOne) ClearLists() *ThemeUpdateOne {
+	tuo.mutation.ClearLists()
 	return tuo
 }
 
-// RemoveListIDs removes the "list" edge to List entities by IDs.
+// RemoveListIDs removes the "lists" edge to List entities by IDs.
 func (tuo *ThemeUpdateOne) RemoveListIDs(ids ...string) *ThemeUpdateOne {
 	tuo.mutation.RemoveListIDs(ids...)
 	return tuo
 }
 
-// RemoveList removes "list" edges to List entities.
-func (tuo *ThemeUpdateOne) RemoveList(l ...*List) *ThemeUpdateOne {
+// RemoveLists removes "lists" edges to List entities.
+func (tuo *ThemeUpdateOne) RemoveLists(l ...*List) *ThemeUpdateOne {
 	ids := make([]string, len(l))
 	for i := range l {
 		ids[i] = l[i].ID
@@ -444,12 +444,12 @@ func (tuo *ThemeUpdateOne) sqlSave(ctx context.Context) (_node *Theme, err error
 			Column: theme.FieldSecondary,
 		})
 	}
-	if tuo.mutation.ListCleared() {
+	if tuo.mutation.ListsCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   theme.ListTable,
-			Columns: []string{theme.ListColumn},
+			Table:   theme.ListsTable,
+			Columns: []string{theme.ListsColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
@@ -460,12 +460,12 @@ func (tuo *ThemeUpdateOne) sqlSave(ctx context.Context) (_node *Theme, err error
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := tuo.mutation.RemovedListIDs(); len(nodes) > 0 && !tuo.mutation.ListCleared() {
+	if nodes := tuo.mutation.RemovedListsIDs(); len(nodes) > 0 && !tuo.mutation.ListsCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   theme.ListTable,
-			Columns: []string{theme.ListColumn},
+			Table:   theme.ListsTable,
+			Columns: []string{theme.ListsColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
@@ -479,12 +479,12 @@ func (tuo *ThemeUpdateOne) sqlSave(ctx context.Context) (_node *Theme, err error
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := tuo.mutation.ListIDs(); len(nodes) > 0 {
+	if nodes := tuo.mutation.ListsIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   theme.ListTable,
-			Columns: []string{theme.ListColumn},
+			Table:   theme.ListsTable,
+			Columns: []string{theme.ListsColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{

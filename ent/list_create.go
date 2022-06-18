@@ -87,14 +87,14 @@ func (lc *ListCreate) SetTheme(t *Theme) *ListCreate {
 	return lc.SetThemeID(t.ID)
 }
 
-// AddTaskIDs adds the "task" edge to the Task entity by IDs.
+// AddTaskIDs adds the "tasks" edge to the Task entity by IDs.
 func (lc *ListCreate) AddTaskIDs(ids ...string) *ListCreate {
 	lc.mutation.AddTaskIDs(ids...)
 	return lc
 }
 
-// AddTask adds the "task" edges to the Task entity.
-func (lc *ListCreate) AddTask(t ...*Task) *ListCreate {
+// AddTasks adds the "tasks" edges to the Task entity.
+func (lc *ListCreate) AddTasks(t ...*Task) *ListCreate {
 	ids := make([]string, len(t))
 	for i := range t {
 		ids[i] = t[i].ID
@@ -295,12 +295,12 @@ func (lc *ListCreate) createSpec() (*List, *sqlgraph.CreateSpec) {
 		_node.ThemeID = nodes[0]
 		_spec.Edges = append(_spec.Edges, edge)
 	}
-	if nodes := lc.mutation.TaskIDs(); len(nodes) > 0 {
+	if nodes := lc.mutation.TasksIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   list.TaskTable,
-			Columns: []string{list.TaskColumn},
+			Table:   list.TasksTable,
+			Columns: []string{list.TasksColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{

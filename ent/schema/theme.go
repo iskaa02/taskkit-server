@@ -32,6 +32,6 @@ func (Theme) Annotations() []schema.Annotation {
 // Edges of the Theme.
 func (Theme) Edges() []ent.Edge {
 	return []ent.Edge{
-		edge.To("list", List.Type),
+		edge.To("lists", List.Type),
 	}
 }

@@ -27,7 +27,7 @@ type ThemeQuery struct {
 	fields     []string
 	predicates []predicate.Theme
 	// eager-loading edges.
-	withList *ListQuery
+	withLists *ListQuery
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -64,8 +64,8 @@ func (tq *ThemeQuery) Order(o ...OrderFunc) *ThemeQuery {
 	return tq
 }
 
-// QueryList chains the current query on the "list" edge.
-func (tq *ThemeQuery) QueryList() *ListQuery {
+// QueryLists chains the current query on the "lists" edge.
+func (tq *ThemeQuery) QueryLists() *ListQuery {
 	query := &ListQuery{config: tq.config}
 	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
 		if err := tq.prepareQuery(ctx); err != nil {
@@ -78,7 +78,7 @@ func (tq *ThemeQuery) QueryList() *ListQuery {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(theme.Table, theme.FieldID, selector),
 			sqlgraph.To(list.Table, list.FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, theme.ListTable, theme.ListColumn),
+			sqlgraph.Edge(sqlgraph.O2M, false, theme.ListsTable, theme.ListsColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(tq.driver.Dialect(), step)
 		return fromU, nil
@@ -267,7 +267,7 @@ func (tq *ThemeQuery) Clone() *ThemeQuery {
 		offset:     tq.offset,
 		order:      append([]OrderFunc{}, tq.order...),
 		predicates: append([]predicate.Theme{}, tq.predicates...),
-		withList:   tq.withList.Clone(),
+		withLists:  tq.withLists.Clone(),
 		// clone intermediate query.
 		sql:    tq.sql.Clone(),
 		path:   tq.path,
@@ -275,14 +275,14 @@ func (tq *ThemeQuery) Clone() *ThemeQuery {
 	}
 }
 
-// WithList tells the query-builder to eager-load the nodes that are connected to
-// the "list" edge. The optional arguments are used to configure the query builder of the edge.
-func (tq *ThemeQuery) WithList(opts ...func(*ListQuery)) *ThemeQuery {
+// WithLists tells the query-builder to eager-load the nodes that are connected to
+// the "lists" edge. The optional arguments are used to configure the query builder of the edge.
+func (tq *ThemeQuery) WithLists(opts ...func(*ListQuery)) *ThemeQuery {
 	query := &ListQuery{config: tq.config}
 	for _, opt := range opts {
 		opt(query)
 	}
-	tq.withList = query
+	tq.withLists = query
 	return tq
 }
 
@@ -352,7 +352,7 @@ func (tq *ThemeQuery) sqlAll(ctx context.Context) ([]*Theme, error) {
 		nodes       = []*Theme{}
 		_spec       = tq.querySpec()
 		loadedTypes = [1]bool{
-			tq.withList != nil,
+			tq.withLists != nil,
 		}
 	)
 	_spec.ScanValues = func(columns []string) ([]interface{}, error) {
@@ -375,16 +375,16 @@ func (tq *ThemeQuery) sqlAll(ctx context.Context) ([]*Theme, error) {
 		return nodes, nil
 	}
 
-	if query := tq.withList; query != nil {
+	if query := tq.withLists; query != nil {
 		fks := make([]driver.Value, 0, len(nodes))
 		nodeids := make(map[int64]*Theme)
 		for i := range nodes {
 			fks = append(fks, nodes[i].ID)
 			nodeids[nodes[i].ID] = nodes[i]
-			nodes[i].Edges.List = []*List{}
+			nodes[i].Edges.Lists = []*List{}
 		}
 		query.Where(predicate.List(func(s *sql.Selector) {
-			s.Where(sql.InValues(theme.ListColumn, fks...))
+			s.Where(sql.InValues(theme.ListsColumn, fks...))
 		}))
 		neighbors, err := query.All(ctx)
 		if err != nil {
@@ -396,7 +396,7 @@ func (tq *ThemeQuery) sqlAll(ctx context.Context) ([]*Theme, error) {
 			if !ok {
 				return nil, fmt.Errorf(`unexpected foreign-key "theme_id" returned %v for node %v`, fk, n.ID)
 			}
-			node.Edges.List = append(node.Edges.List, n)
+			node.Edges.Lists = append(node.Edges.Lists, n)
 		}
 	}
 

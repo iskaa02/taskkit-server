@@ -238,15 +238,15 @@ func (c *ListClient) QueryTheme(l *List) *ThemeQuery {
 	return query
 }
 
-// QueryTask queries the task edge of a List.
-func (c *ListClient) QueryTask(l *List) *TaskQuery {
+// QueryTasks queries the tasks edge of a List.
+func (c *ListClient) QueryTasks(l *List) *TaskQuery {
 	query := &TaskQuery{config: c.config}
 	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
 		id := l.ID
 		step := sqlgraph.NewStep(
 			sqlgraph.From(list.Table, list.FieldID, id),
 			sqlgraph.To(task.Table, task.FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, list.TaskTable, list.TaskColumn),
+			sqlgraph.Edge(sqlgraph.O2M, false, list.TasksTable, list.TasksColumn),
 		)
 		fromV = sqlgraph.Neighbors(l.driver.Dialect(), step)
 		return fromV, nil
@@ -450,15 +450,15 @@ func (c *ThemeClient) GetX(ctx context.Context, id int64) *Theme {
 	return obj
 }
 
-// QueryList queries the list edge of a Theme.
-func (c *ThemeClient) QueryList(t *Theme) *ListQuery {
+// QueryLists queries the lists edge of a Theme.
+func (c *ThemeClient) QueryLists(t *Theme) *ListQuery {
 	query := &ListQuery{config: c.config}
 	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
 		id := t.ID
 		step := sqlgraph.NewStep(
 			sqlgraph.From(theme.Table, theme.FieldID, id),
 			sqlgraph.To(list.Table, list.FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, theme.ListTable, theme.ListColumn),
+			sqlgraph.Edge(sqlgraph.O2M, false, theme.ListsTable, theme.ListsColumn),
 		)
 		fromV = sqlgraph.Neighbors(t.driver.Dialect(), step)
 		return fromV, nil

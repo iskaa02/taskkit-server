@@ -47,14 +47,14 @@ func (tc *ThemeCreate) SetID(i int64) *ThemeCreate {
 	return tc
 }
 
-// AddListIDs adds the "list" edge to the List entity by IDs.
+// AddListIDs adds the "lists" edge to the List entity by IDs.
 func (tc *ThemeCreate) AddListIDs(ids ...string) *ThemeCreate {
 	tc.mutation.AddListIDs(ids...)
 	return tc
 }
 
-// AddList adds the "list" edges to the List entity.
-func (tc *ThemeCreate) AddList(l ...*List) *ThemeCreate {
+// AddLists adds the "lists" edges to the List entity.
+func (tc *ThemeCreate) AddLists(l ...*List) *ThemeCreate {
 	ids := make([]string, len(l))
 	for i := range l {
 		ids[i] = l[i].ID
@@ -184,12 +184,12 @@ func (tc *ThemeCreate) createSpec() (*Theme, *sqlgraph.CreateSpec) {
 		})
 		_node.Secondary = value
 	}
-	if nodes := tc.mutation.ListIDs(); len(nodes) > 0 {
+	if nodes := tc.mutation.ListsIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   theme.ListTable,
-			Columns: []string{theme.ListColumn},
+			Table:   theme.ListsTable,
+			Columns: []string{theme.ListsColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{

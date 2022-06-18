@@ -11,17 +11,17 @@ const (
 	FieldPrimary = "primary"
 	// FieldSecondary holds the string denoting the secondary field in the database.
 	FieldSecondary = "secondary"
-	// EdgeList holds the string denoting the list edge name in mutations.
-	EdgeList = "list"
+	// EdgeLists holds the string denoting the lists edge name in mutations.
+	EdgeLists = "lists"
 	// Table holds the table name of the theme in the database.
 	Table = "theme"
-	// ListTable is the table that holds the list relation/edge.
-	ListTable = "list"
-	// ListInverseTable is the table name for the List entity.
+	// ListsTable is the table that holds the lists relation/edge.
+	ListsTable = "list"
+	// ListsInverseTable is the table name for the List entity.
 	// It exists in this package in order to avoid circular dependency with the "list" package.
-	ListInverseTable = "list"
-	// ListColumn is the table column denoting the list relation/edge.
-	ListColumn = "theme_id"
+	ListsInverseTable = "list"
+	// ListsColumn is the table column denoting the lists relation/edge.
+	ListsColumn = "theme_id"
 )
 
 // Columns holds all SQL columns for theme fields.

@@ -25,7 +25,7 @@ var (
 		PrimaryKey: []*schema.Column{ListColumns[0]},
 		ForeignKeys: []*schema.ForeignKey{
 			{
-				Symbol:     "list_theme_list",
+				Symbol:     "list_theme_lists",
 				Columns:    []*schema.Column{ListColumns[5]},
 				RefColumns: []*schema.Column{ThemeColumns[0]},
 				OnDelete:   schema.NoAction,
@@ -53,7 +53,7 @@ var (
 		PrimaryKey: []*schema.Column{TaskColumns[0]},
 		ForeignKeys: []*schema.ForeignKey{
 			{
-				Symbol:     "task_list_task",
+				Symbol:     "task_list_tasks",
 				Columns:    []*schema.Column{TaskColumns[10]},
 				RefColumns: []*schema.Column{ListColumns[0]},
 				OnDelete:   schema.NoAction,

@@ -307,25 +307,25 @@ func SecondaryNotNil() predicate.Theme {
 	})
 }
 
-// HasList applies the HasEdge predicate on the "list" edge.
-func HasList() predicate.Theme {
+// HasLists applies the HasEdge predicate on the "lists" edge.
+func HasLists() predicate.Theme {
 	return predicate.Theme(func(s *sql.Selector) {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(Table, FieldID),
-			sqlgraph.To(ListTable, FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, ListTable, ListColumn),
+			sqlgraph.To(ListsTable, FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, ListsTable, ListsColumn),
 		)
 		sqlgraph.HasNeighbors(s, step)
 	})
 }
 
-// HasListWith applies the HasEdge predicate on the "list" edge with a given conditions (other predicates).
-func HasListWith(preds ...predicate.List) predicate.Theme {
+// HasListsWith applies the HasEdge predicate on the "lists" edge with a given conditions (other predicates).
+func HasListsWith(preds ...predicate.List) predicate.Theme {
 	return predicate.Theme(func(s *sql.Selector) {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(Table, FieldID),
-			sqlgraph.To(ListInverseTable, FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, ListTable, ListColumn),
+			sqlgraph.To(ListsInverseTable, FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, ListsTable, ListsColumn),
 		)
 		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
 			for _, p := range preds {

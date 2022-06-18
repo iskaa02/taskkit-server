@@ -37,8 +37,10 @@ func (List) Annotations() []schema.Annotation {
 func (List) Edges() []ent.Edge {
 	return []ent.Edge{
 		edge.From("theme", Theme.Type).
-			Ref("list").
-			Required().Unique().Field("theme_id"),
-		edge.To("task", Task.Type),
+			Ref("lists").
+			Unique().
+			Required().
+			Field("theme_id"),
+		edge.To("tasks", Task.Type),
 	}
 }

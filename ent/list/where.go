@@ -481,25 +481,25 @@ func HasThemeWith(preds ...predicate.Theme) predicate.List {
 	})
 }
 
-// HasTask applies the HasEdge predicate on the "task" edge.
-func HasTask() predicate.List {
+// HasTasks applies the HasEdge predicate on the "tasks" edge.
+func HasTasks() predicate.List {
 	return predicate.List(func(s *sql.Selector) {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(Table, FieldID),
-			sqlgraph.To(TaskTable, FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, TaskTable, TaskColumn),
+			sqlgraph.To(TasksTable, FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, TasksTable, TasksColumn),
 		)
 		sqlgraph.HasNeighbors(s, step)
 	})
 }
 
-// HasTaskWith applies the HasEdge predicate on the "task" edge with a given conditions (other predicates).
-func HasTaskWith(preds ...predicate.Task) predicate.List {
+// HasTasksWith applies the HasEdge predicate on the "tasks" edge with a given conditions (other predicates).
+func HasTasksWith(preds ...predicate.Task) predicate.List {
 	return predicate.List(func(s *sql.Selector) {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(Table, FieldID),
-			sqlgraph.To(TaskInverseTable, FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, TaskTable, TaskColumn),
+			sqlgraph.To(TasksInverseTable, FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, TasksTable, TasksColumn),
 		)
 		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
 			for _, p := range preds {

@@ -23,8 +23,8 @@ const (
 	FieldCreatedAt = "created_at"
 	// EdgeTheme holds the string denoting the theme edge name in mutations.
 	EdgeTheme = "theme"
-	// EdgeTask holds the string denoting the task edge name in mutations.
-	EdgeTask = "task"
+	// EdgeTasks holds the string denoting the tasks edge name in mutations.
+	EdgeTasks = "tasks"
 	// Table holds the table name of the list in the database.
 	Table = "list"
 	// ThemeTable is the table that holds the theme relation/edge.
@@ -34,13 +34,13 @@ const (
 	ThemeInverseTable = "theme"
 	// ThemeColumn is the table column denoting the theme relation/edge.
 	ThemeColumn = "theme_id"
-	// TaskTable is the table that holds the task relation/edge.
-	TaskTable = "task"
-	// TaskInverseTable is the table name for the Task entity.
+	// TasksTable is the table that holds the tasks relation/edge.
+	TasksTable = "task"
+	// TasksInverseTable is the table name for the Task entity.
 	// It exists in this package in order to avoid circular dependency with the "task" package.
-	TaskInverseTable = "task"
-	// TaskColumn is the table column denoting the task relation/edge.
-	TaskColumn = "list_id"
+	TasksInverseTable = "task"
+	// TasksColumn is the table column denoting the tasks relation/edge.
+	TasksColumn = "list_id"
 )
 
 // Columns holds all SQL columns for list fields.

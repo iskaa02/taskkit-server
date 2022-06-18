@@ -36,8 +36,8 @@ type List struct {
 type ListEdges struct {
 	// Theme holds the value of the theme edge.
 	Theme *Theme `json:"theme,omitempty"`
-	// Task holds the value of the task edge.
-	Task []*Task `json:"task,omitempty"`
+	// Tasks holds the value of the tasks edge.
+	Tasks []*Task `json:"tasks,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
 	loadedTypes [2]bool
@@ -57,13 +57,13 @@ func (e ListEdges) ThemeOrErr() (*Theme, error) {
 	return nil, &NotLoadedError{edge: "theme"}
 }
 
-// TaskOrErr returns the Task value or an error if the edge
+// TasksOrErr returns the Tasks value or an error if the edge
 // was not loaded in eager-loading.
-func (e ListEdges) TaskOrErr() ([]*Task, error) {
+func (e ListEdges) TasksOrErr() ([]*Task, error) {
 	if e.loadedTypes[1] {
-		return e.Task, nil
+		return e.Tasks, nil
 	}
-	return nil, &NotLoadedError{edge: "task"}
+	return nil, &NotLoadedError{edge: "tasks"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -140,9 +140,9 @@ func (l *List) QueryTheme() *ThemeQuery {
 	return (&ListClient{config: l.config}).QueryTheme(l)
 }
 
-// QueryTask queries the "task" edge of the List entity.
-func (l *List) QueryTask() *TaskQuery {
-	return (&ListClient{config: l.config}).QueryTask(l)
+// QueryTasks queries the "tasks" edge of the List entity.
+func (l *List) QueryTasks() *TaskQuery {
+	return (&ListClient{config: l.config}).QueryTasks(l)
 }
 
 // Update returns a builder for updating this List.

@@ -46,9 +46,9 @@ type ListMutation struct {
 	clearedFields map[string]struct{}
 	theme         *int64
 	clearedtheme  bool
-	task          map[string]struct{}
-	removedtask   map[string]struct{}
-	clearedtask   bool
+	tasks         map[string]struct{}
+	removedtasks  map[string]struct{}
+	clearedtasks  bool
 	done          bool
 	oldValue      func(context.Context) (*List, error)
 	predicates    []predicate.List
@@ -364,58 +364,58 @@ func (m *ListMutation) ResetTheme() {
 	m.clearedtheme = false
 }
 
-// AddTaskIDs adds the "task" edge to the Task entity by ids.
+// AddTaskIDs adds the "tasks" edge to the Task entity by ids.
 func (m *ListMutation) AddTaskIDs(ids ...string) {
-	if m.task == nil {
-		m.task = make(map[string]struct{})
+	if m.tasks == nil {
+		m.tasks = make(map[string]struct{})
 	}
 	for i := range ids {
-		m.task[ids[i]] = struct{}{}
+		m.tasks[ids[i]] = struct{}{}
 	}
 }
 
-// ClearTask clears the "task" edge to the Task entity.
-func (m *ListMutation) ClearTask() {
-	m.clearedtask = true
+// ClearTasks clears the "tasks" edge to the Task entity.
+func (m *ListMutation) ClearTasks() {
+	m.clearedtasks = true
 }
 
-// TaskCleared reports if the "task" edge to the Task entity was cleared.
-func (m *ListMutation) TaskCleared() bool {
-	return m.clearedtask
+// TasksCleared reports if the "tasks" edge to the Task entity was cleared.
+func (m *ListMutation) TasksCleared() bool {
+	return m.clearedtasks
 }
 
-// RemoveTaskIDs removes the "task" edge to the Task entity by IDs.
+// RemoveTaskIDs removes the "tasks" edge to the Task entity by IDs.
 func (m *ListMutation) RemoveTaskIDs(ids ...string) {
-	if m.removedtask == nil {
-		m.removedtask = make(map[string]struct{})
+	if m.removedtasks == nil {
+		m.removedtasks = make(map[string]struct{})
 	}
 	for i := range ids {
-		delete(m.task, ids[i])
-		m.removedtask[ids[i]] = struct{}{}
+		delete(m.tasks, ids[i])
+		m.removedtasks[ids[i]] = struct{}{}
 	}
 }
 
-// RemovedTask returns the removed IDs of the "task" edge to the Task entity.
-func (m *ListMutation) RemovedTaskIDs() (ids []string) {
-	for id := range m.removedtask {
+// RemovedTasks returns the removed IDs of the "tasks" edge to the Task entity.
+func (m *ListMutation) RemovedTasksIDs() (ids []string) {
+	for id := range m.removedtasks {
 		ids = append(ids, id)
 	}
 	return
 }
 
-// TaskIDs returns the "task" edge IDs in the mutation.
-func (m *ListMutation) TaskIDs() (ids []string) {
-	for id := range m.task {
+// TasksIDs returns the "tasks" edge IDs in the mutation.
+func (m *ListMutation) TasksIDs() (ids []string) {
+	for id := range m.tasks {
 		ids = append(ids, id)
 	}
 	return
 }
 
-// ResetTask resets all changes to the "task" edge.
-func (m *ListMutation) ResetTask() {
-	m.task = nil
-	m.clearedtask = false
-	m.removedtask = nil
+// ResetTasks resets all changes to the "tasks" edge.
+func (m *ListMutation) ResetTasks() {
+	m.tasks = nil
+	m.clearedtasks = false
+	m.removedtasks = nil
 }
 
 // Where appends a list predicates to the ListMutation builder.
@@ -611,8 +611,8 @@ func (m *ListMutation) AddedEdges() []string {
 	if m.theme != nil {
 		edges = append(edges, list.EdgeTheme)
 	}
-	if m.task != nil {
-		edges = append(edges, list.EdgeTask)
+	if m.tasks != nil {
+		edges = append(edges, list.EdgeTasks)
 	}
 	return edges
 }
@@ -625,9 +625,9 @@ func (m *ListMutation) AddedIDs(name string) []ent.Value {
 		if id := m.theme; id != nil {
 			return []ent.Value{*id}
 		}
-	case list.EdgeTask:
-		ids := make([]ent.Value, 0, len(m.task))
-		for id := range m.task {
+	case list.EdgeTasks:
+		ids := make([]ent.Value, 0, len(m.tasks))
+		for id := range m.tasks {
 			ids = append(ids, id)
 		}
 		return ids
@@ -638,8 +638,8 @@ func (m *ListMutation) AddedIDs(name string) []ent.Value {
 // RemovedEdges returns all edge names that were removed in this mutation.
 func (m *ListMutation) RemovedEdges() []string {
 	edges := make([]string, 0, 2)
-	if m.removedtask != nil {
-		edges = append(edges, list.EdgeTask)
+	if m.removedtasks != nil {
+		edges = append(edges, list.EdgeTasks)
 	}
 	return edges
 }
@@ -648,9 +648,9 @@ func (m *ListMutation) RemovedEdges() []string {
 // the given name in this mutation.
 func (m *ListMutation) RemovedIDs(name string) []ent.Value {
 	switch name {
-	case list.EdgeTask:
-		ids := make([]ent.Value, 0, len(m.removedtask))
-		for id := range m.removedtask {
+	case list.EdgeTasks:
+		ids := make([]ent.Value, 0, len(m.removedtasks))
+		for id := range m.removedtasks {
 			ids = append(ids, id)
 		}
 		return ids
@@ -664,8 +664,8 @@ func (m *ListMutation) ClearedEdges() []string {
 	if m.clearedtheme {
 		edges = append(edges, list.EdgeTheme)
 	}
-	if m.clearedtask {
-		edges = append(edges, list.EdgeTask)
+	if m.clearedtasks {
+		edges = append(edges, list.EdgeTasks)
 	}
 	return edges
 }
@@ -676,8 +676,8 @@ func (m *ListMutation) EdgeCleared(name string) bool {
 	switch name {
 	case list.EdgeTheme:
 		return m.clearedtheme
-	case list.EdgeTask:
-		return m.clearedtask
+	case list.EdgeTasks:
+		return m.clearedtasks
 	}
 	return false
 }
@@ -700,8 +700,8 @@ func (m *ListMutation) ResetEdge(name string) error {
 	case list.EdgeTheme:
 		m.ResetTheme()
 		return nil
-	case list.EdgeTask:
-		m.ResetTask()
+	case list.EdgeTasks:
+		m.ResetTasks()
 		return nil
 	}
 	return fmt.Errorf("unknown List edge %s", name)
@@ -1634,9 +1634,9 @@ type ThemeMutation struct {
 	primary       *string
 	secondary     *null.String
 	clearedFields map[string]struct{}
-	list          map[string]struct{}
-	removedlist   map[string]struct{}
-	clearedlist   bool
+	lists         map[string]struct{}
+	removedlists  map[string]struct{}
+	clearedlists  bool
 	done          bool
 	oldValue      func(context.Context) (*Theme, error)
 	predicates    []predicate.Theme
@@ -1831,58 +1831,58 @@ func (m *ThemeMutation) ResetSecondary() {
 	delete(m.clearedFields, theme.FieldSecondary)
 }
 
-// AddListIDs adds the "list" edge to the List entity by ids.
+// AddListIDs adds the "lists" edge to the List entity by ids.
 func (m *ThemeMutation) AddListIDs(ids ...string) {
-	if m.list == nil {
-		m.list = make(map[string]struct{})
+	if m.lists == nil {
+		m.lists = make(map[string]struct{})
 	}
 	for i := range ids {
-		m.list[ids[i]] = struct{}{}
+		m.lists[ids[i]] = struct{}{}
 	}
 }
 
-// ClearList clears the "list" edge to the List entity.
-func (m *ThemeMutation) ClearList() {
-	m.clearedlist = true
+// ClearLists clears the "lists" edge to the List entity.
+func (m *ThemeMutation) ClearLists() {
+	m.clearedlists = true
 }
 
-// ListCleared reports if the "list" edge to the List entity was cleared.
-func (m *ThemeMutation) ListCleared() bool {
-	return m.clearedlist
+// ListsCleared reports if the "lists" edge to the List entity was cleared.
+func (m *ThemeMutation) ListsCleared() bool {
+	return m.clearedlists
 }
 
-// RemoveListIDs removes the "list" edge to the List entity by IDs.
+// RemoveListIDs removes the "lists" edge to the List entity by IDs.
 func (m *ThemeMutation) RemoveListIDs(ids ...string) {
-	if m.removedlist == nil {
-		m.removedlist = make(map[string]struct{})
+	if m.removedlists == nil {
+		m.removedlists = make(map[string]struct{})
 	}
 	for i := range ids {
-		delete(m.list, ids[i])
-		m.removedlist[ids[i]] = struct{}{}
+		delete(m.lists, ids[i])
+		m.removedlists[ids[i]] = struct{}{}
 	}
 }
 
-// RemovedList returns the removed IDs of the "list" edge to the List entity.
-func (m *ThemeMutation) RemovedListIDs() (ids []string) {
-	for id := range m.removedlist {
+// RemovedLists returns the removed IDs of the "lists" edge to the List entity.
+func (m *ThemeMutation) RemovedListsIDs() (ids []string) {
+	for id := range m.removedlists {
 		ids = append(ids, id)
 	}
 	return
 }
 
-// ListIDs returns the "list" edge IDs in the mutation.
-func (m *ThemeMutation) ListIDs() (ids []string) {
-	for id := range m.list {
+// ListsIDs returns the "lists" edge IDs in the mutation.
+func (m *ThemeMutation) ListsIDs() (ids []string) {
+	for id := range m.lists {
 		ids = append(ids, id)
 	}
 	return
 }
 
-// ResetList resets all changes to the "list" edge.
-func (m *ThemeMutation) ResetList() {
-	m.list = nil
-	m.clearedlist = false
-	m.removedlist = nil
+// ResetLists resets all changes to the "lists" edge.
+func (m *ThemeMutation) ResetLists() {
+	m.lists = nil
+	m.clearedlists = false
+	m.removedlists = nil
 }
 
 // Where appends a list predicates to the ThemeMutation builder.
@@ -2030,8 +2030,8 @@ func (m *ThemeMutation) ResetField(name string) error {
 // AddedEdges returns all edge names that were set/added in this mutation.
 func (m *ThemeMutation) AddedEdges() []string {
 	edges := make([]string, 0, 1)
-	if m.list != nil {
-		edges = append(edges, theme.EdgeList)
+	if m.lists != nil {
+		edges = append(edges, theme.EdgeLists)
 	}
 	return edges
 }
@@ -2040,9 +2040,9 @@ func (m *ThemeMutation) AddedEdges() []string {
 // name in this mutation.
 func (m *ThemeMutation) AddedIDs(name string) []ent.Value {
 	switch name {
-	case theme.EdgeList:
-		ids := make([]ent.Value, 0, len(m.list))
-		for id := range m.list {
+	case theme.EdgeLists:
+		ids := make([]ent.Value, 0, len(m.lists))
+		for id := range m.lists {
 			ids = append(ids, id)
 		}
 		return ids
@@ -2053,8 +2053,8 @@ func (m *ThemeMutation) AddedIDs(name string) []ent.Value {
 // RemovedEdges returns all edge names that were removed in this mutation.
 func (m *ThemeMutation) RemovedEdges() []string {
 	edges := make([]string, 0, 1)
-	if m.removedlist != nil {
-		edges = append(edges, theme.EdgeList)
+	if m.removedlists != nil {
+		edges = append(edges, theme.EdgeLists)
 	}
 	return edges
 }
@@ -2063,9 +2063,9 @@ func (m *ThemeMutation) RemovedEdges() []string {
 // the given name in this mutation.
 func (m *ThemeMutation) RemovedIDs(name string) []ent.Value {
 	switch name {
-	case theme.EdgeList:
-		ids := make([]ent.Value, 0, len(m.removedlist))
-		for id := range m.removedlist {
+	case theme.EdgeLists:
+		ids := make([]ent.Value, 0, len(m.removedlists))
+		for id := range m.removedlists {
 			ids = append(ids, id)
 		}
 		return ids
@@ -2076,8 +2076,8 @@ func (m *ThemeMutation) RemovedIDs(name string) []ent.Value {
 // ClearedEdges returns all edge names that were cleared in this mutation.
 func (m *ThemeMutation) ClearedEdges() []string {
 	edges := make([]string, 0, 1)
-	if m.clearedlist {
-		edges = append(edges, theme.EdgeList)
+	if m.clearedlists {
+		edges = append(edges, theme.EdgeLists)
 	}
 	return edges
 }
@@ -2086,8 +2086,8 @@ func (m *ThemeMutation) ClearedEdges() []string {
 // was cleared in this mutation.
 func (m *ThemeMutation) EdgeCleared(name string) bool {
 	switch name {
-	case theme.EdgeList:
-		return m.clearedlist
+	case theme.EdgeLists:
+		return m.clearedlists
 	}
 	return false
 }
@@ -2104,8 +2104,8 @@ func (m *ThemeMutation) ClearEdge(name string) error {
 // It returns an error if the edge is not defined in the schema.
 func (m *ThemeMutation) ResetEdge(name string) error {
 	switch name {
-	case theme.EdgeList:
-		m.ResetList()
+	case theme.EdgeLists:
+		m.ResetLists()
 		return nil
 	}
 	return fmt.Errorf("unknown Theme edge %s", name)

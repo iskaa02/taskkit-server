@@ -89,14 +89,14 @@ func (lu *ListUpdate) SetTheme(t *Theme) *ListUpdate {
 	return lu.SetThemeID(t.ID)
 }
 
-// AddTaskIDs adds the "task" edge to the Task entity by IDs.
+// AddTaskIDs adds the "tasks" edge to the Task entity by IDs.
 func (lu *ListUpdate) AddTaskIDs(ids ...string) *ListUpdate {
 	lu.mutation.AddTaskIDs(ids...)
 	return lu
 }
 
-// AddTask adds the "task" edges to the Task entity.
-func (lu *ListUpdate) AddTask(t ...*Task) *ListUpdate {
+// AddTasks adds the "tasks" edges to the Task entity.
+func (lu *ListUpdate) AddTasks(t ...*Task) *ListUpdate {
 	ids := make([]string, len(t))
 	for i := range t {
 		ids[i] = t[i].ID
@@ -115,20 +115,20 @@ func (lu *ListUpdate) ClearTheme() *ListUpdate {
 	return lu
 }
 
-// ClearTask clears all "task" edges to the Task entity.
-func (lu *ListUpdate) ClearTask() *ListUpdate {
-	lu.mutation.ClearTask()
+// ClearTasks clears all "tasks" edges to the Task entity.
+func (lu *ListUpdate) ClearTasks() *ListUpdate {
+	lu.mutation.ClearTasks()
 	return lu
 }
 
-// RemoveTaskIDs removes the "task" edge to Task entities by IDs.
+// RemoveTaskIDs removes the "tasks" edge to Task entities by IDs.
 func (lu *ListUpdate) RemoveTaskIDs(ids ...string) *ListUpdate {
 	lu.mutation.RemoveTaskIDs(ids...)
 	return lu
 }
 
-// RemoveTask removes "task" edges to Task entities.
-func (lu *ListUpdate) RemoveTask(t ...*Task) *ListUpdate {
+// RemoveTasks removes "tasks" edges to Task entities.
+func (lu *ListUpdate) RemoveTasks(t ...*Task) *ListUpdate {
 	ids := make([]string, len(t))
 	for i := range t {
 		ids[i] = t[i].ID
@@ -285,12 +285,12 @@ func (lu *ListUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if lu.mutation.TaskCleared() {
+	if lu.mutation.TasksCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   list.TaskTable,
-			Columns: []string{list.TaskColumn},
+			Table:   list.TasksTable,
+			Columns: []string{list.TasksColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
@@ -301,12 +301,12 @@ func (lu *ListUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := lu.mutation.RemovedTaskIDs(); len(nodes) > 0 && !lu.mutation.TaskCleared() {
+	if nodes := lu.mutation.RemovedTasksIDs(); len(nodes) > 0 && !lu.mutation.TasksCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   list.TaskTable,
-			Columns: []string{list.TaskColumn},
+			Table:   list.TasksTable,
+			Columns: []string{list.TasksColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
@@ -320,12 +320,12 @@ func (lu *ListUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := lu.mutation.TaskIDs(); len(nodes) > 0 {
+	if nodes := lu.mutation.TasksIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   list.TaskTable,
-			Columns: []string{list.TaskColumn},
+			Table:   list.TasksTable,
+			Columns: []string{list.TasksColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
@@ -417,14 +417,14 @@ func (luo *ListUpdateOne) SetTheme(t *Theme) *ListUpdateOne {
 	return luo.SetThemeID(t.ID)
 }
 
-// AddTaskIDs adds the "task" edge to the Task entity by IDs.
+// AddTaskIDs adds the "tasks" edge to the Task entity by IDs.
 func (luo *ListUpdateOne) AddTaskIDs(ids ...string) *ListUpdateOne {
 	luo.mutation.AddTaskIDs(ids...)
 	return luo
 }
 
-// AddTask adds the "task" edges to the Task entity.
-func (luo *ListUpdateOne) AddTask(t ...*Task) *ListUpdateOne {
+// AddTasks adds the "tasks" edges to the Task entity.
+func (luo *ListUpdateOne) AddTasks(t ...*Task) *ListUpdateOne {
 	ids := make([]string, len(t))
 	for i := range t {
 		ids[i] = t[i].ID
@@ -443,20 +443,20 @@ func (luo *ListUpdateOne) ClearTheme() *ListUpdateOne {
 	return luo
 }
 
-// ClearTask clears all "task" edges to the Task entity.
-func (luo *ListUpdateOne) ClearTask() *ListUpdateOne {
-	luo.mutation.ClearTask()
+// ClearTasks clears all "tasks" edges to the Task entity.
+func (luo *ListUpdateOne) ClearTasks() *ListUpdateOne {
+	luo.mutation.ClearTasks()
 	return luo
 }
 
-// RemoveTaskIDs removes the "task" edge to Task entities by IDs.
+// RemoveTaskIDs removes the "tasks" edge to Task entities by IDs.
 func (luo *ListUpdateOne) RemoveTaskIDs(ids ...string) *ListUpdateOne {
 	luo.mutation.RemoveTaskIDs(ids...)
 	return luo
 }
 
-// RemoveTask removes "task" edges to Task entities.
-func (luo *ListUpdateOne) RemoveTask(t ...*Task) *ListUpdateOne {
+// RemoveTasks removes "tasks" edges to Task entities.
+func (luo *ListUpdateOne) RemoveTasks(t ...*Task) *ListUpdateOne {
 	ids := make([]string, len(t))
 	for i := range t {
 		ids[i] = t[i].ID
@@ -637,12 +637,12 @@ func (luo *ListUpdateOne) sqlSave(ctx context.Context) (_node *List, err error) 
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if luo.mutation.TaskCleared() {
+	if luo.mutation.TasksCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   list.TaskTable,
-			Columns: []string{list.TaskColumn},
+			Table:   list.TasksTable,
+			Columns: []string{list.TasksColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
@@ -653,12 +653,12 @@ func (luo *ListUpdateOne) sqlSave(ctx context.Context) (_node *List, err error) 
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := luo.mutation.RemovedTaskIDs(); len(nodes) > 0 && !luo.mutation.TaskCleared() {
+	if nodes := luo.mutation.RemovedTasksIDs(); len(nodes) > 0 && !luo.mutation.TasksCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   list.TaskTable,
-			Columns: []string{list.TaskColumn},
+			Table:   list.TasksTable,
+			Columns: []string{list.TasksColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
@@ -672,12 +672,12 @@ func (luo *ListUpdateOne) sqlSave(ctx context.Context) (_node *List, err error) 
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := luo.mutation.TaskIDs(); len(nodes) > 0 {
+	if nodes := luo.mutation.TasksIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   list.TaskTable,
-			Columns: []string{list.TaskColumn},
+			Table:   list.TasksTable,
+			Columns: []string{list.TasksColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{

@@ -27,20 +27,20 @@ type Theme struct {
 
 // ThemeEdges holds the relations/edges for other nodes in the graph.
 type ThemeEdges struct {
-	// List holds the value of the list edge.
-	List []*List `json:"list,omitempty"`
+	// Lists holds the value of the lists edge.
+	Lists []*List `json:"lists,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
 	loadedTypes [1]bool
 }
 
-// ListOrErr returns the List value or an error if the edge
+// ListsOrErr returns the Lists value or an error if the edge
 // was not loaded in eager-loading.
-func (e ThemeEdges) ListOrErr() ([]*List, error) {
+func (e ThemeEdges) ListsOrErr() ([]*List, error) {
 	if e.loadedTypes[0] {
-		return e.List, nil
+		return e.Lists, nil
 	}
-	return nil, &NotLoadedError{edge: "list"}
+	return nil, &NotLoadedError{edge: "lists"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -92,9 +92,9 @@ func (t *Theme) assignValues(columns []string, values []interface{}) error {
 	return nil
 }
 
-// QueryList queries the "list" edge of the Theme entity.
-func (t *Theme) QueryList() *ListQuery {
-	return (&ThemeClient{config: t.config}).QueryList(t)
+// QueryLists queries the "lists" edge of the Theme entity.
+func (t *Theme) QueryLists() *ListQuery {
+	return (&ThemeClient{config: t.config}).QueryLists(t)
 }
 
 // Update returns a builder for updating this Theme.

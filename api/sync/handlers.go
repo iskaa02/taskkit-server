@@ -1,18 +1,18 @@
 package sync
 
 import (
-	"database/sql"
 	"net/http"
 
 	"github.com/go-chi/chi/v5"
+	"github.com/iskaa02/taskkit-server/ent"
 )
 
 type sync struct {
-	db *sql.DB
+	client *ent.Client
 }
 
-func Routes(db *sql.DB) http.Handler {
-	h := &sync{db}
+func Routes(client *ent.Client) http.Handler {
+	h := &sync{client}
 	// route will be mounted on /sync
 	r := chi.NewRouter()
 	r.Get("/pushchanges", h.PushChanges)

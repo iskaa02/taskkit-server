@@ -4,10 +4,8 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"log"
 	"net/http"
-
-	entsql "entgo.io/ent/dialect/sql"
-	"github.com/iskaa02/taskkit-server/ent"
 )
 
 func (s sync) PushChanges(w http.ResponseWriter, r *http.Request) {
@@ -16,19 +14,16 @@ func (s sync) PushChanges(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 	}
+	tx, err := s.client.Tx(context.Background())
 	if err != nil {
-		panic(err)
+		log.Fatal(err)
 	}
-	// queries := models.New(tx)
-	entDriver := entsql.OpenDB("postgres", s.db)
-	client := ent.NewClient(ent.Driver(entDriver))
-	tx, _ := client.Tx(context.Background())
 
 	err = applyListChanges(changes.List, tx)
 	if err != nil {
 		tx.Rollback()
 		if err.Error() == "conflict" {
-			http.Error(w, "Tried to update deleted record, Pull latest changes first", http.StatusBadRequest)
+			http.Error(w, "Tried to modify deleted record, Pull latest changes first", http.StatusBadRequest)
 			return
 		}
 		fmt.Println(err)
@@ -38,7 +33,7 @@ func (s sync) PushChanges(w http.ResponseWriter, r *http.Request) {
 	err = applyTaskChanges(changes.Task, tx)
 	if err != nil {
 		if err.Error() == "conflict" {
-			http.Error(w, "Tried to update deleted record, Pull latest changes first", http.StatusBadRequest)
+			http.Error(w, "Tried to modify deleted record, Pull latest changes first", http.StatusBadRequest)
 			return
 		}
 		tx.Rollback()

@@ -31,7 +31,7 @@ func getTaskChanges(lastPulled time.Time, c *ent.Client) taskChanges {
 	rawUpdated, err := c.Task.Query().
 		Where(
 			task.And(
-				task.CreatedAtGT(lastPulled),
+				task.CreatedAtLT(lastPulled),
 				task.LastModifiedGTE(lastPulled),
 			),
 		).
@@ -45,7 +45,7 @@ func getTaskChanges(lastPulled time.Time, c *ent.Client) taskChanges {
 	}
 
 	deleted, err := c.Task.Query().
-		Where(task.LastModifiedGTE(lastPulled)).
+		Where(task.And(task.LastModifiedGTE(lastPulled), task.IsDeleted(true))).
 		IDs(ctx)
 	if err != nil {
 		fmt.Println(err)
@@ -87,7 +87,7 @@ func getListChanges(lastPulled time.Time, c *ent.Client) listChanges {
 	}
 
 	deleted, err := c.List.Query().
-		Where(list.LastModifiedGTE(lastPulled)).
+		Where(list.And(list.LastModifiedGTE(lastPulled), list.IsDeleted(true))).
 		IDs(ctx)
 	if err != nil {
 		fmt.Println(err)
